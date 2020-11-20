@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Graph from "../components/Graph";
 
-import { getUserGraph } from "../util/api.js";
+import { getUserTransactions } from "../util/api.js";
 
 function UserGraph(props) {
   const username = props.match.params.id;
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
 
   useEffect(() => {
-    const loadUserGraph = async () => {
+    const generateUserGraph = async () => {
       let allUsers = new Set([username]);
       let searched = new Set();
       let links = [];
@@ -25,7 +25,6 @@ function UserGraph(props) {
       let graph = { nodes: [], links: links };
       for (let user of allUsers) graph["nodes"].push({ name: user });
       setUserGraph(graph);
-      console.log(graph);
     };
 
     const searchDegree = async (toSearch) => {
@@ -33,7 +32,7 @@ function UserGraph(props) {
       let links = [];
 
       for (let user of toSearch) {
-        const data = await getUserGraph(user);
+        const data = await getUserTransactions(user);
         if (data) {
           for (let t of data) {
             users.add(t.sender);
@@ -45,7 +44,7 @@ function UserGraph(props) {
       return [users, links];
     };
 
-    loadUserGraph();
+    generateUserGraph();
   }, [username]);
 
   return <Graph graph={userGraph} />;
