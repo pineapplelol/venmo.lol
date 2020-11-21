@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { Layout } from "antd";
+
 import Graph from "../components/Graph";
+import Sidebar from "../components/Sidebar";
 
 import { getUserTransactions } from "../util/api.js";
+import "../css/UserGraph.css";
+
+const { Content } = Layout;
 
 function UserGraph(props) {
   const username = props.match.params.id;
@@ -47,7 +53,16 @@ function UserGraph(props) {
     generateUserGraph();
   }, [username]);
 
-  return <Graph graph={userGraph} />;
+  return (
+    <Layout>
+      <Sidebar />
+      <Content>
+        <div className="graph">
+          <Graph graph={userGraph} />
+        </div>
+      </Content>
+    </Layout>
+  );
 }
 
 export default UserGraph;
