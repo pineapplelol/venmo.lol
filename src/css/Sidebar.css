@@ -1,0 +1,9 @@
+.sidebar-content {
+  margin: 0 auto;
+  padding-top: 2em;
+  width: 80%;
+}
+
+.sidebar-content h1 {
+  font-size: 24px;
+}
