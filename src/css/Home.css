@@ -1,0 +1,66 @@
+.landing {
+  display: block;
+  width: 80%;
+  margin: 0px auto;
+  max-width: 1200px;
+}
+
+.landing-content {
+  display: flex;
+  width: 100%;
+}
+
+.landing-text {
+  padding-top: 10%;
+  width: 40%;
+}
+
+.landing-text h1 {
+  color: #1e065c;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+  font-size: 60px;
+}
+
+.landing-text h2 {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  color: #1e065c;
+  font-weight: 400;
+  font-size: 40px;
+}
+
+.landing-text p {
+  font-weight: 500;
+  font-size: 17px;
+  color: #767777;
+  margin-top: 15px;
+}
+
+.landing-img {
+  width: 60%;
+}
+
+.landing-img img {
+  width: 100%;
+  display: block;
+  margin-top: 30px;
+}
+
+.ant-btn-primary {
+  background: #1e065c !important;
+  border-color: #1e065c !important;
+}
+
+.ant-input-affix-wrapper-focused {
+  border-color: #1e065c !important;
+}
+
+.ant-input-search .ant-input:hover {
+  border-color: #1e065c !important;
+}
+
+.ant-input:focus {
+  border-color: #1e065c;
+  box-shadow: 0 0 0 2px rgba(16, 6, 92, 0.2) !important;
+}
