@@ -1,8 +1,11 @@
 import React from "react";
 import { ForceGraph3D } from "react-force-graph";
 import SpriteText from "three-spritetext";
+import { useHistory } from "react-router-dom";
 
 function Graph({ graph }) {
+  const history = useHistory();
+
   return (
     <ForceGraph3D
       graphData={graph}
@@ -25,6 +28,9 @@ function Graph({ graph }) {
       }}
       nodeThreeObjectExtend={true}
       nodeRelSize={3}
+      onNodeClick={(value) => {
+        history.push(`/${value.name}`);
+      }}
       nodeLabel={""}
     />
   );
