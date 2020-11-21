@@ -61,6 +61,6 @@
 }
 
 .ant-input:focus {
-  border-color: #1e065c;
+  border-color: #1e065c !important;
   box-shadow: 0 0 0 2px rgba(16, 6, 92, 0.2) !important;
 }
