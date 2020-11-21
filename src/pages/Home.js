@@ -3,6 +3,7 @@ import { Input } from "antd";
 import { useHistory } from "react-router-dom";
 
 import Nav from "../components/Nav";
+import Footer from "../components/Footer";
 import "../css/Home.css";
 
 const { Search } = Input;
@@ -31,6 +32,7 @@ function Home() {
           <img src="./images/space.svg" alt="space" />
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
