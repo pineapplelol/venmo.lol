@@ -6,7 +6,11 @@ function Footer() {
   return (
     <div className="footer">
       <a href="https://vercel.com?utm_source=pineapplelol&utm_campaign=oss">
-        <img src="./images/powered-by-vercel.svg" className="vercel" />
+        <img
+          src="./images/powered-by-vercel.svg"
+          alt="vercel"
+          className="vercel"
+        />
       </a>
       <div className="footer-links">
         <ul>
