@@ -15,6 +15,7 @@ function UserGraph(props) {
   const [displayUsername, setDisplayUsername] = useState(username);
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
   const [userDegrees, setUserDegrees] = useState({});
+  const [transactions, setTransactions] = useState({});
 
   useEffect(() => {
     const generateUserGraph = async () => {
@@ -23,6 +24,7 @@ function UserGraph(props) {
       let toSearch = new Set([username]);
       let userDegrees = {};
       let links = [];
+      let transactions = [];
 
       for (let i = 0; i < 3; i += 1) {
         if (i !== 0) {
@@ -35,6 +37,7 @@ function UserGraph(props) {
         await searchDegree(toSearch).then((data) => {
           allUsers = new Set([...allUsers, ...data[0]]);
           links.push(...data[1]);
+          transactions.push(...data[2]);
         });
       }
 
@@ -45,6 +48,7 @@ function UserGraph(props) {
       let realUsername = matchUsername(allUsers);
       userDegrees[realUsername] = 0;
       setUserDegrees(userDegrees);
+      setTransactions(transactions);
       setDisplayUsername(realUsername);
 
       let graph = { nodes: [], links: links };
@@ -61,6 +65,7 @@ function UserGraph(props) {
     const searchDegree = async (toSearch) => {
       let users = new Set();
       let links = [];
+      let transactions = [];
 
       for (let user of toSearch) {
         const data = await getUserTransactions(user);
@@ -69,10 +74,11 @@ function UserGraph(props) {
             users.add(t.sender);
             users.add(t.recipient);
             links.push({ from: t.sender, to: t.recipient });
+            transactions.push(t);
           }
         }
       }
-      return [users, links];
+      return [users, links, transactions];
     };
 
     generateUserGraph();
@@ -80,7 +86,11 @@ function UserGraph(props) {
 
   return (
     <Layout>
-      <Sidebar username={displayUsername} userDegrees={userDegrees} />
+      <Sidebar
+        username={displayUsername}
+        userDegrees={userDegrees}
+        transactions={transactions}
+      />
       <Content>
         <div className="graph">
           <Graph graph={userGraph} />

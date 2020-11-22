@@ -11,7 +11,7 @@ const { Content, Sider } = Layout;
 const ListItem = List.Item;
 const ListItemMeta = List.Item.Meta;
 
-function Sidebar({ username, userDegrees }) {
+function Sidebar({ username, userDegrees, transactions }) {
   const history = useHistory();
   const users = Object.keys(userDegrees);
   const [searchUser, setSearchUser] = useState(username);
@@ -54,6 +54,32 @@ function Sidebar({ username, userDegrees }) {
                         />
                       </ListItem>
                     </Button>
+                  )}
+                />
+              </Panel>
+              <Panel
+                header="Transactions"
+                key="transactions"
+                extra={transactions.length}
+              >
+                <List
+                  dataSource={transactions}
+                  renderItem={(t) => (
+                    <ListItem>
+                      <ListItemMeta
+                        title={
+                          <div className="user-list-row">
+                            {t.transactionType === "charged"
+                              ? `${t.recipient} charged ${t.sender}`
+                              : `${t.sender} paid ${t.recipient}`}
+                            <div className="user-list-row-description">
+                              {t.date}
+                            </div>
+                          </div>
+                        }
+                        description={t.message}
+                      />
+                    </ListItem>
                   )}
                 />
               </Panel>

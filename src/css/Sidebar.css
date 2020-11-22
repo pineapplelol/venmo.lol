@@ -32,6 +32,10 @@
   align-items: center;
 }
 
+.user-list-row-description {
+  text-align: right;
+}
+
 .ant-collapse-content {
   max-height: 50vh;
   overflow: scroll !important;
