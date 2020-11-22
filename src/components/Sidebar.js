@@ -1,17 +1,21 @@
 import React, { useState } from "react";
-import { Layout, Input } from "antd";
+import { Button, Collapse, Layout, Input, List } from "antd";
 import { useHistory } from "react-router-dom";
 
 import "../css/Sidebar.css";
 
+const { Panel } = Collapse;
 const { Search } = Input;
 const { Content, Sider } = Layout;
 
-function Sidebar({ username }) {
+const ListItem = List.Item;
+const ListItemMeta = List.Item.Meta;
+
+function Sidebar({ username, users }) {
   const history = useHistory();
   const [searchUser, setSearchUser] = useState(username);
 
-  const onSearch = (value) => history.push(`/${value}`);
+  const directToUser = (value) => history.push(`/${value}`);
 
   return (
     <Sider width={"30%"} theme="light">
@@ -20,11 +24,37 @@ function Sidebar({ username }) {
           <h1>{username}</h1>
           <Search
             value={searchUser}
-            onSearch={onSearch}
+            onSearch={directToUser}
             onChange={(e) => setSearchUser(e.target.value)}
             enterButton
             width={"80%"}
           />
+          <div className="sidebar-information">
+            <Collapse accordion>
+              <Panel header="Users in Graph" key="users" extra={users.length}>
+                <List
+                  dataSource={users}
+                  renderItem={(user) => (
+                    <Button
+                      className="user-list-card"
+                      onClick={() => {
+                        directToUser(user.name);
+                      }}
+                      block
+                    >
+                      <ListItem>
+                        <ListItemMeta
+                          title={
+                            <div className="user-list-row">{user.name}</div>
+                          }
+                        />
+                      </ListItem>
+                    </Button>
+                  )}
+                />
+              </Panel>
+            </Collapse>
+          </div>
         </Content>
       </div>
     </Sider>

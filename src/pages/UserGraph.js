@@ -55,7 +55,7 @@ function UserGraph(props) {
 
   return (
     <Layout>
-      <Sidebar username={username} />
+      <Sidebar username={username} users={userGraph["nodes"]} />
       <Content>
         <div className="graph">
           <Graph graph={userGraph} />
