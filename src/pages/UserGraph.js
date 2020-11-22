@@ -15,7 +15,7 @@ function UserGraph(props) {
   const [displayUsername, setDisplayUsername] = useState(username);
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
   const [userDegrees, setUserDegrees] = useState({});
-  const [transactions, setTransactions] = useState({});
+  const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     const generateUserGraph = async () => {
@@ -23,8 +23,12 @@ function UserGraph(props) {
       let searched = new Set();
       let toSearch = new Set([username]);
       let userDegrees = {};
+
+      let seenLinks = new Set();
       let links = [];
-      let transactions = new Set();
+
+      let seenTransactions = new Set();
+      let transactions = [];
 
       for (let i = 0; i < 3; i += 1) {
         if (i !== 0) {
@@ -32,28 +36,49 @@ function UserGraph(props) {
           for (let u of toSearch) {
             if (!(u in userDegrees)) userDegrees[u] = i;
           }
+          setUserDegrees(userDegrees);
         }
-        searched = allUsers;
+
         await searchDegree(toSearch).then((data) => {
           allUsers = new Set([...allUsers, ...data[0]]);
-          links.push(...data[1]);
-          transactions = new Set([...transactions, ...data[2]]);
+
+          let users = [];
+          for (let user of allUsers) users.push({ name: user });
+
+          for (let l of data[1]) {
+            const k = `${l.to}${l.from}`;
+            if (!seenLinks.has(k)) {
+              seenLinks.add(k);
+              links.push(l);
+            }
+          }
+          setUserGraph({ nodes: users, links: [] });
+          // https://github.com/vasturiano/react-force-graph/issues/238
+          // setUserGraph({ nodes: users, links: [...links] });
+
+          for (let t of data[2]) {
+            const k = `${t.sender}${t.date}`;
+            if (!seenTransactions.has(k)) {
+              seenTransactions.add(k);
+              transactions.push(t);
+            }
+          }
+          setTransactions(transactions);
         });
       }
 
       for (let u of allUsers) {
         if (!(u in userDegrees)) userDegrees[u] = 3;
       }
+      setUserDegrees(userDegrees);
 
       let realUsername = matchUsername(allUsers);
       userDegrees[realUsername] = 0;
-      setUserDegrees(userDegrees);
-      setTransactions(transactions);
       setDisplayUsername(realUsername);
 
-      let graph = { nodes: [], links: links };
-      for (let user of allUsers) graph["nodes"].push({ name: user });
-      setUserGraph(graph);
+      let users = [];
+      for (let user of allUsers) users.push({ name: user });
+      setUserGraph({ nodes: users, links: links });
     };
 
     const matchUsername = (allUsers) => {
@@ -78,6 +103,7 @@ function UserGraph(props) {
           }
         }
       }
+
       return [users, links, transactions];
     };
 

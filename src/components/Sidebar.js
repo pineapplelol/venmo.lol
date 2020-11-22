@@ -7,7 +7,7 @@ import "../css/Sidebar.css";
 
 const { Panel } = Collapse;
 const { Search } = Input;
-const { Content, Sider } = Layout;
+const { Content, Sider, Footer } = Layout;
 
 const ListItem = List.Item;
 const ListItemMeta = List.Item.Meta;
@@ -50,7 +50,7 @@ function Sidebar({ username, userDegrees, transactions }) {
                     <h1>{userInfo.name}</h1>
                     <p>{userInfo.venmoSince}</p>
                   </div>
-                  <img src={userInfo.img} />
+                  <img src={userInfo.img} alt="profile" />
                 </div>
               </Panel>
               <Panel header="Users in Graph" key="users" extra={users.length}>
@@ -81,7 +81,7 @@ function Sidebar({ username, userDegrees, transactions }) {
               <Panel
                 header="Transactions"
                 key="transactions"
-                extra={transactions.size}
+                extra={transactions.length}
               >
                 <List
                   dataSource={transactions}
@@ -108,6 +108,16 @@ function Sidebar({ username, userDegrees, transactions }) {
           </div>
         </Content>
       </div>
+      <Footer className="sidebar-footer">
+        <a href="https://pineapple.lol">
+          <img src="/images/pineapplelol.png" alt="pineapplelol" />
+        </a>
+        <div className="vercel">
+          <a href="https://vercel.com?utm_source=pineapplelol&utm_campaign=oss">
+            <img src="/powered-by-vercel.svg" alt="vercel" />
+          </a>
+        </div>
+      </Footer>
     </Sider>
   );
 }
