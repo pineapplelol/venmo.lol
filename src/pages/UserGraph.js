@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Layout } from "antd";
-import { useHistory } from "react-router-dom";
 
 import Graph from "../components/Graph";
 import Sidebar from "../components/Sidebar";
@@ -12,25 +11,24 @@ const { Content } = Layout;
 
 function UserGraph(props) {
   const username = props.match.params.id;
-  const history = useHistory();
 
   const [displayUsername, setDisplayUsername] = useState(username);
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
-  const [degrees, setDegrees] = useState({});
+  const [userDegrees, setUserDegrees] = useState({});
 
   useEffect(() => {
     const generateUserGraph = async () => {
       let allUsers = new Set();
       let searched = new Set();
       let toSearch = new Set([username]);
-      let degrees = {};
+      let userDegrees = {};
       let links = [];
 
       for (let i = 0; i < 3; i += 1) {
         if (i !== 0) {
           toSearch = new Set([...allUsers].filter((x) => !searched.has(x)));
           for (let u of toSearch) {
-            if (!(u in degrees)) degrees[u] = i;
+            if (!(u in userDegrees)) userDegrees[u] = i;
           }
         }
         searched = allUsers;
@@ -41,12 +39,12 @@ function UserGraph(props) {
       }
 
       for (let u of allUsers) {
-        if (!(u in degrees)) degrees[u] = 3;
+        if (!(u in userDegrees)) userDegrees[u] = 3;
       }
 
       let realUsername = matchUsername(allUsers);
-      degrees[realUsername] = 0;
-      setDegrees(degrees);
+      userDegrees[realUsername] = 0;
+      setUserDegrees(userDegrees);
       setDisplayUsername(realUsername);
 
       let graph = { nodes: [], links: links };
@@ -82,11 +80,7 @@ function UserGraph(props) {
 
   return (
     <Layout>
-      <Sidebar
-        username={displayUsername}
-        users={userGraph["nodes"]}
-        degrees={degrees}
-      />
+      <Sidebar username={displayUsername} userDegrees={userDegrees} />
       <Content>
         <div className="graph">
           <Graph graph={userGraph} />
