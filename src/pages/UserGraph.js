@@ -10,17 +10,20 @@ import "../css/UserGraph.css";
 const { Content } = Layout;
 
 function UserGraph(props) {
-  const username = props.match.params.id;
+  const [username, setUsername] = useState(props.match.params.id);
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
 
   useEffect(() => {
     const generateUserGraph = async () => {
-      let allUsers = new Set([username]);
+      let allUsers = new Set();
       let searched = new Set();
+      let toSearch = new Set([username]);
       let links = [];
 
       for (let i = 0; i < 3; i += 1) {
-        let toSearch = new Set([...allUsers].filter((x) => !searched.has(x)));
+        if (i !== 0) {
+          toSearch = new Set([...allUsers].filter((x) => !searched.has(x)));
+        }
         searched = allUsers;
         await searchDegree(toSearch).then((data) => {
           allUsers = new Set([...allUsers, ...data[0]]);
@@ -30,7 +33,14 @@ function UserGraph(props) {
 
       let graph = { nodes: [], links: links };
       for (let user of allUsers) graph["nodes"].push({ name: user });
+      matchUsername(allUsers);
       setUserGraph(graph);
+    };
+
+    const matchUsername = (allUsers) => {
+      for (let u of allUsers) {
+        if (u.toLowerCase() === username.toLowerCase()) setUsername(u);
+      }
     };
 
     const searchDegree = async (toSearch) => {
