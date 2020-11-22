@@ -1,6 +1,7 @@
 .sidebar-content {
   margin: 0 auto;
   padding-top: 2em;
+  min-height: calc(100vh - 95px);
   width: 80%;
 }
 
@@ -10,6 +11,21 @@
 
 .sidebar-information {
   padding-top: 2em;
+}
+
+.sidebar-footer {
+  background-color: #fff !important;
+  height: 20px;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.sidebar-footer img {
+  width: 160px;
+}
+
+.vercel {
+  padding-top: 5px;
 }
 
 .user-info {

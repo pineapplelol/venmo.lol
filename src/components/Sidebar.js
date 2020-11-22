@@ -7,7 +7,7 @@ import "../css/Sidebar.css";
 
 const { Panel } = Collapse;
 const { Search } = Input;
-const { Content, Sider } = Layout;
+const { Content, Sider, Footer } = Layout;
 
 const ListItem = List.Item;
 const ListItemMeta = List.Item.Meta;
@@ -108,6 +108,16 @@ function Sidebar({ username, userDegrees, transactions }) {
           </div>
         </Content>
       </div>
+      <Footer className="sidebar-footer">
+        <a href="https://pineapple.lol">
+          <img src="/images/pineapplelol.png" alt="pineapplelol" />
+        </a>
+        <div className="vercel">
+          <a href="https://vercel.com?utm_source=pineapplelol&utm_campaign=oss">
+            <img src="/powered-by-vercel.svg" alt="vercel" />
+          </a>
+        </div>
+      </Footer>
     </Sider>
   );
 }
