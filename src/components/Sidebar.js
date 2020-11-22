@@ -11,11 +11,13 @@ const { Content, Sider } = Layout;
 const ListItem = List.Item;
 const ListItemMeta = List.Item.Meta;
 
-function Sidebar({ username, users }) {
+function Sidebar({ username, users, degrees }) {
   const history = useHistory();
   const [searchUser, setSearchUser] = useState(username);
 
   const directToUser = (value) => history.push(`/${value}`);
+
+  console.log(degrees);
 
   return (
     <Sider width={"30%"} theme="light">
@@ -45,7 +47,10 @@ function Sidebar({ username, users }) {
                       <ListItem>
                         <ListItemMeta
                           title={
-                            <div className="user-list-row">{user.name}</div>
+                            <div className="user-list-row">
+                              {user.name}
+                              <div>Depth: {degrees[user.name]}</div>
+                            </div>
                           }
                         />
                       </ListItem>

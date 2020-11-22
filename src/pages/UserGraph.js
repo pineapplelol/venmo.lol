@@ -12,17 +12,23 @@ const { Content } = Layout;
 function UserGraph(props) {
   const [username, setUsername] = useState(props.match.params.id);
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
+  const [degrees, setDegrees] = useState({});
 
   useEffect(() => {
     const generateUserGraph = async () => {
       let allUsers = new Set();
       let searched = new Set();
       let toSearch = new Set([username]);
+      let degrees = {};
+      degrees[username] = 0;
       let links = [];
 
       for (let i = 0; i < 3; i += 1) {
         if (i !== 0) {
           toSearch = new Set([...allUsers].filter((x) => !searched.has(x)));
+          for (let u of toSearch) {
+            if (!(u in degrees)) degrees[u] = i;
+          }
         }
         searched = allUsers;
         await searchDegree(toSearch).then((data) => {
@@ -31,9 +37,15 @@ function UserGraph(props) {
         });
       }
 
+      for (let u of allUsers) {
+        if (!(u in degrees)) degrees[u] = 3;
+      }
+
+      matchUsername(allUsers);
+      setDegrees(degrees);
+
       let graph = { nodes: [], links: links };
       for (let user of allUsers) graph["nodes"].push({ name: user });
-      matchUsername(allUsers);
       setUserGraph(graph);
     };
 
@@ -65,7 +77,11 @@ function UserGraph(props) {
 
   return (
     <Layout>
-      <Sidebar username={username} users={userGraph["nodes"]} />
+      <Sidebar
+        username={username}
+        users={userGraph["nodes"]}
+        degrees={degrees}
+      />
       <Content>
         <div className="graph">
           <Graph graph={userGraph} />
