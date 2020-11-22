@@ -23,7 +23,7 @@ function UserGraph(props) {
       let searched = new Set();
       let toSearch = new Set([username]);
       let userDegrees = {};
-      let links = [];
+      let links = new Set();
       let transactions = new Set();
 
       for (let i = 0; i < 3; i += 1) {
@@ -32,28 +32,39 @@ function UserGraph(props) {
           for (let u of toSearch) {
             if (!(u in userDegrees)) userDegrees[u] = i;
           }
+          setUserDegrees(userDegrees);
         }
-        searched = allUsers;
+
         await searchDegree(toSearch).then((data) => {
           allUsers = new Set([...allUsers, ...data[0]]);
-          links.push(...data[1]);
+
+          let usersLOL = [];
+          for (let user of allUsers) usersLOL.push({ name: user });
+          setUserGraph({ nodes: usersLOL, links: [] });
+          links = new Set([...links, ...data[1]]);
+
+          for (let i of links) {
+            if (!allUsers.has(i.to)) console.log(i.to);
+            if (!allUsers.has(i.from)) console.log(i.from);
+          }
+
           transactions = new Set([...transactions, ...data[2]]);
+          setTransactions(transactions);
         });
       }
 
       for (let u of allUsers) {
         if (!(u in userDegrees)) userDegrees[u] = 3;
       }
+      setUserDegrees(userDegrees);
 
       let realUsername = matchUsername(allUsers);
       userDegrees[realUsername] = 0;
-      setUserDegrees(userDegrees);
-      setTransactions(transactions);
       setDisplayUsername(realUsername);
 
-      let graph = { nodes: [], links: links };
-      for (let user of allUsers) graph["nodes"].push({ name: user });
-      setUserGraph(graph);
+      let userLOOL = [];
+      for (let user of allUsers) userLOOL.push({ name: user });
+      setUserGraph({ nodes: userLOOL, links: Array.from(links) });
     };
 
     const matchUsername = (allUsers) => {
@@ -78,6 +89,7 @@ function UserGraph(props) {
           }
         }
       }
+
       return [users, links, transactions];
     };
 
