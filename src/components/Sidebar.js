@@ -34,7 +34,7 @@ function Sidebar({ username, userDegrees, transactions }) {
     <Sider width={"30%"} theme="light">
       <div className="sidebar-content">
         <Content>
-          <h1>{username}</h1>
+          <h1>{`${userInfo.name} (${username})`}</h1>
           <Search
             value={searchUser}
             onSearch={directToUser}
