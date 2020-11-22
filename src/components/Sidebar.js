@@ -50,7 +50,7 @@ function Sidebar({ username, userDegrees, transactions }) {
                     <h1>{userInfo.name}</h1>
                     <p>{userInfo.venmoSince}</p>
                   </div>
-                  <img src={userInfo.img} />
+                  <img src={userInfo.img} alt="profile" />
                 </div>
               </Panel>
               <Panel header="Users in Graph" key="users" extra={users.length}>
