@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const instance = axios.create({
-  baseURL: "https://venmoapi.pineapple.lol",
+  baseURL: process.env.REACT_APP_VENMOLOL_API,
 });
 
 export const getUserInformation = (username) => {
