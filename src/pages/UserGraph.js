@@ -38,15 +38,11 @@ function UserGraph(props) {
         await searchDegree(toSearch).then((data) => {
           allUsers = new Set([...allUsers, ...data[0]]);
 
-          let usersLOL = [];
-          for (let user of allUsers) usersLOL.push({ name: user });
-          setUserGraph({ nodes: usersLOL, links: [] });
-          links = new Set([...links, ...data[1]]);
+          let users = [];
+          for (let user of allUsers) users.push({ name: user });
 
-          for (let i of links) {
-            if (!allUsers.has(i.to)) console.log(i.to);
-            if (!allUsers.has(i.from)) console.log(i.from);
-          }
+          setUserGraph({ nodes: users, links: [] });
+          links = new Set([...links, ...data[1]]);
 
           transactions = new Set([...transactions, ...data[2]]);
           setTransactions(transactions);
@@ -62,9 +58,9 @@ function UserGraph(props) {
       userDegrees[realUsername] = 0;
       setDisplayUsername(realUsername);
 
-      let userLOOL = [];
-      for (let user of allUsers) userLOOL.push({ name: user });
-      setUserGraph({ nodes: userLOOL, links: Array.from(links) });
+      let users = [];
+      for (let user of allUsers) users.push({ name: user });
+      setUserGraph({ nodes: users, links: Array.from(links) });
     };
 
     const matchUsername = (allUsers) => {
