@@ -81,7 +81,7 @@ function Sidebar({ username, userDegrees, transactions }) {
               <Panel
                 header="Transactions"
                 key="transactions"
-                extra={transactions.size}
+                extra={transactions.length}
               >
                 <List
                   dataSource={transactions}

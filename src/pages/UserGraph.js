@@ -15,7 +15,7 @@ function UserGraph(props) {
   const [displayUsername, setDisplayUsername] = useState(username);
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
   const [userDegrees, setUserDegrees] = useState({});
-  const [transactions, setTransactions] = useState({});
+  const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     const generateUserGraph = async () => {
@@ -24,7 +24,8 @@ function UserGraph(props) {
       let toSearch = new Set([username]);
       let userDegrees = {};
       let links = new Set();
-      let transactions = new Set();
+      let seenTransactions = new Set();
+      let transactions = [];
 
       for (let i = 0; i < 3; i += 1) {
         if (i !== 0) {
@@ -44,7 +45,14 @@ function UserGraph(props) {
           setUserGraph({ nodes: users, links: [] });
           links = new Set([...links, ...data[1]]);
 
-          transactions = new Set([...transactions, ...data[2]]);
+          for (let t of data[2]) {
+            const k = `${t.sender}${t.date}`;
+            console.log(k);
+            if (!seenTransactions.has(k)) {
+              seenTransactions.add(k);
+              transactions.push(t);
+            }
+          }
           setTransactions(transactions);
         });
       }
