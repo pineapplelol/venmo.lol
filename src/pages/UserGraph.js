@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Layout } from "antd";
+import { useHistory } from "react-router-dom";
 
 import Graph from "../components/Graph";
 import Sidebar from "../components/Sidebar";
@@ -10,7 +11,10 @@ import "../css/UserGraph.css";
 const { Content } = Layout;
 
 function UserGraph(props) {
-  const [username, setUsername] = useState(props.match.params.id);
+  const username = props.match.params.id;
+  const history = useHistory();
+
+  const [displayUsername, setDisplayUsername] = useState(username);
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
   const [degrees, setDegrees] = useState({});
 
@@ -20,7 +24,6 @@ function UserGraph(props) {
       let searched = new Set();
       let toSearch = new Set([username]);
       let degrees = {};
-      degrees[username] = 0;
       let links = [];
 
       for (let i = 0; i < 3; i += 1) {
@@ -41,8 +44,10 @@ function UserGraph(props) {
         if (!(u in degrees)) degrees[u] = 3;
       }
 
-      matchUsername(allUsers);
+      let realUsername = matchUsername(allUsers);
+      degrees[realUsername] = 0;
       setDegrees(degrees);
+      setDisplayUsername(realUsername);
 
       let graph = { nodes: [], links: links };
       for (let user of allUsers) graph["nodes"].push({ name: user });
@@ -51,7 +56,7 @@ function UserGraph(props) {
 
     const matchUsername = (allUsers) => {
       for (let u of allUsers) {
-        if (u.toLowerCase() === username.toLowerCase()) setUsername(u);
+        if (u.toLowerCase() === username.toLowerCase()) return u;
       }
     };
 
@@ -78,7 +83,7 @@ function UserGraph(props) {
   return (
     <Layout>
       <Sidebar
-        username={username}
+        username={displayUsername}
         users={userGraph["nodes"]}
         degrees={degrees}
       />
