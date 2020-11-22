@@ -24,7 +24,7 @@ function UserGraph(props) {
       let toSearch = new Set([username]);
       let userDegrees = {};
       let links = [];
-      let transactions = [];
+      let transactions = new Set();
 
       for (let i = 0; i < 3; i += 1) {
         if (i !== 0) {
@@ -37,7 +37,7 @@ function UserGraph(props) {
         await searchDegree(toSearch).then((data) => {
           allUsers = new Set([...allUsers, ...data[0]]);
           links.push(...data[1]);
-          transactions.push(...data[2]);
+          transactions = new Set([...transactions, ...data[2]]);
         });
       }
 
