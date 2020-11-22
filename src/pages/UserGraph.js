@@ -23,7 +23,10 @@ function UserGraph(props) {
       let searched = new Set();
       let toSearch = new Set([username]);
       let userDegrees = {};
-      let links = new Set();
+
+      let seenLinks = new Set();
+      let links = [];
+
       let seenTransactions = new Set();
       let transactions = [];
 
@@ -42,12 +45,19 @@ function UserGraph(props) {
           let users = [];
           for (let user of allUsers) users.push({ name: user });
 
+          for (let l of data[1]) {
+            const k = `${l.to}${l.from}`;
+            if (!seenLinks.has(k)) {
+              seenLinks.add(k);
+              links.push(l);
+            }
+          }
           setUserGraph({ nodes: users, links: [] });
-          links = new Set([...links, ...data[1]]);
+          // https://github.com/vasturiano/react-force-graph/issues/238
+          // setUserGraph({ nodes: users, links: [...links] });
 
           for (let t of data[2]) {
             const k = `${t.sender}${t.date}`;
-            console.log(k);
             if (!seenTransactions.has(k)) {
               seenTransactions.add(k);
               transactions.push(t);
@@ -68,7 +78,7 @@ function UserGraph(props) {
 
       let users = [];
       for (let user of allUsers) users.push({ name: user });
-      setUserGraph({ nodes: users, links: Array.from(links) });
+      setUserGraph({ nodes: users, links: links });
     };
 
     const matchUsername = (allUsers) => {
