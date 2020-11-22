@@ -12,6 +12,22 @@
   padding-top: 2em;
 }
 
+.user-info {
+  display: flex;
+  flex-direction: row;
+}
+
+.user-info-text {
+  display: block;
+  width: 80%;
+}
+
+.user-info img {
+  float: left;
+  height: 40%;
+  width: 40%;
+}
+
 .user-list-card {
   cursor: pointer;
   padding: 0 24px;
