@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Collapse, Layout, Input, List } from "antd";
 import { useHistory } from "react-router-dom";
 
+import { getUserInformation } from "../util/api.js";
 import "../css/Sidebar.css";
 
 const { Panel } = Collapse;
@@ -15,8 +16,19 @@ function Sidebar({ username, userDegrees, transactions }) {
   const history = useHistory();
   const users = Object.keys(userDegrees);
   const [searchUser, setSearchUser] = useState(username);
+  const [userInfo, setUserInfo] = useState({});
 
   const directToUser = (value) => history.push(`/${value}`);
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      await getUserInformation(username).then((data) => {
+        setUserInfo(data);
+      });
+    };
+
+    getUserInfo();
+  }, [username]);
 
   return (
     <Sider width={"30%"} theme="light">
@@ -32,6 +44,15 @@ function Sidebar({ username, userDegrees, transactions }) {
           />
           <div className="sidebar-information">
             <Collapse accordion>
+              <Panel header="User Information" key="user-info">
+                <div className="user-info">
+                  <div className="user-info-text">
+                    <h1>{userInfo.name}</h1>
+                    <p>{userInfo.venmoSince}</p>
+                  </div>
+                  <img src={userInfo.img} />
+                </div>
+              </Panel>
               <Panel header="Users in Graph" key="users" extra={users.length}>
                 <List
                   dataSource={users}
