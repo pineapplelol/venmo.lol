@@ -17,6 +17,7 @@ function Sidebar({ username, userDegrees, transactions }) {
   const users = Object.keys(userDegrees);
   const [searchUser, setSearchUser] = useState(username);
   const [userInfo, setUserInfo] = useState({});
+  const portrait = window.innerHeight > window.innerWidth;
 
   const directToUser = (value) => history.push(`/${value}`);
 
@@ -31,7 +32,12 @@ function Sidebar({ username, userDegrees, transactions }) {
   }, [username]);
 
   return (
-    <Sider width={"30%"} theme="light">
+    <Sider
+      width={portrait ? "80%" : "30%"}
+      theme="light"
+      collapsible={portrait}
+      collapsedWidth={0}
+    >
       <div className="sidebar-content">
         <Content>
           <h1>{`${userInfo.name} (${username})`}</h1>
