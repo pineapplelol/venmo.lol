@@ -73,12 +73,16 @@ function UserGraph(props) {
       setUserDegrees(userDegrees);
 
       let realUsername = matchUsername(allUsers);
-      userDegrees[realUsername] = 0;
-      setDisplayUsername(realUsername);
+      if (realUsername && realUsername !== displayUsername)
+        setDisplayUsername(realUsername);
+      userDegrees[displayUsername] = 0;
 
       let users = [];
       for (let user of allUsers) users.push({ name: user });
-      setUserGraph({ nodes: users, links: links });
+
+      if (users.length === 0)
+        setUserGraph({ nodes: [{ name: displayUsername }], links: [] });
+      else setUserGraph({ nodes: users, links: links });
     };
 
     const matchUsername = (allUsers) => {

@@ -24,6 +24,7 @@ function Sidebar({ username, userDegrees, transactions }) {
   useEffect(() => {
     const getUserInfo = async () => {
       await getUserInformation(username).then((data) => {
+        console.log(data);
         setUserInfo(data);
       });
     };
@@ -88,7 +89,7 @@ function Sidebar({ username, userDegrees, transactions }) {
                 <Panel
                   header="Transactions"
                   key="transactions"
-                  extra={transactions.length}
+                  extra={transactions.length !== 0 ? transactions.length : ""}
                 >
                   <List
                     dataSource={transactions}
