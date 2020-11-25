@@ -12,16 +12,9 @@
 .footer a {
   float: right;
   margin-left: auto;
-  width: 200px;
 }
 
 .footer img {
   padding-top: 15px;
-  width: 180px;
-}
-
-@media only screen and (max-width: 1000px) {
-  .footer img {
-    width: 160px;
-  }
+  width: 160px;
 }
