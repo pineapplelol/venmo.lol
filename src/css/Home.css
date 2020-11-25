@@ -65,3 +65,49 @@
   border-color: #1e065c !important;
   box-shadow: 0 0 0 2px rgba(16, 6, 92, 0.2) !important;
 }
+
+@media only screen and (max-width: 1000px) {
+  .landing {
+    display: block;
+    width: 90%;
+    margin: 0px auto;
+    max-width: 1200px;
+  }
+
+  .landing-img {
+    display: none;
+  }
+
+  .landing-content {
+    display: flex;
+    width: 100%;
+    min-height: calc(85vh - 180px);
+  }
+
+  .landing-text {
+    padding-top: 10%;
+    width: 100%;
+  }
+
+  .landing-text h1 {
+    color: #1e065c;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+    font-size: 45px;
+  }
+
+  .landing-text h2 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    color: #1e065c;
+    font-weight: 400;
+    font-size: 30px;
+  }
+
+  .landing-text p {
+    font-weight: 500;
+    font-size: 15px;
+    color: #767777;
+    margin-top: 15px;
+  }
+}

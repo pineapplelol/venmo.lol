@@ -19,3 +19,9 @@
   padding-top: 15px;
   width: 180px;
 }
+
+@media only screen and (max-width: 1000px) {
+  .footer img {
+    width: 160px;
+  }
+}
