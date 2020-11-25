@@ -33,9 +33,11 @@ function UserGraph(props) {
       for (let i = 0; i < 3; i += 1) {
         if (i !== 0) {
           toSearch = new Set([...allUsers].filter((x) => !searched.has(x)));
-          for (let u of toSearch) {
-            if (!(u in userDegrees)) userDegrees[u] = i;
-          }
+          for (let u of toSearch) if (!(u in userDegrees)) userDegrees[u] = i;
+
+          let realUsername = matchUsername(allUsers);
+          if (realUsername && realUsername !== displayUsername)
+            setDisplayUsername(realUsername);
           setUserDegrees(userDegrees);
         }
 
@@ -72,9 +74,6 @@ function UserGraph(props) {
       }
       setUserDegrees(userDegrees);
 
-      let realUsername = matchUsername(allUsers);
-      if (realUsername && realUsername !== displayUsername)
-        setDisplayUsername(realUsername);
       userDegrees[displayUsername] = 0;
 
       let users = [];
