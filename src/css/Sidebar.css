@@ -24,6 +24,12 @@
   width: 160px;
 }
 
+@media only screen and (max-width: 800px) {
+  .sidebar-footer img {
+    width: 120px;
+  }
+}
+
 .vercel {
   padding-top: 5px;
 }
