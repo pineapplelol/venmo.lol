@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Collapse, Layout, Input, List } from "antd";
+import { Button, Collapse, Layout, Input, List, notification } from "antd";
 import { useHistory } from "react-router-dom";
 
 import { getUserInformation } from "../util/api.js";
@@ -31,6 +31,17 @@ function Sidebar({ username, userDegrees, transactions }) {
 
     getUserInfo();
   }, [username]);
+
+  useEffect(() => {
+    if (transactions.length === 0) openNotification();
+  }, []);
+
+  const openNotification = () => {
+    notification["warning"]({
+      message: `${username} is private!`,
+      description: "User payment network is not available.",
+    });
+  };
 
   return (
     <Sider
