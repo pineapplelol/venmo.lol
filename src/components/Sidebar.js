@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Collapse, Layout, Input, List } from "antd";
 import { useHistory } from "react-router-dom";
 
@@ -18,20 +18,7 @@ function Sidebar({ username, userDegrees, transactions }) {
   const [searchUser, setSearchUser] = useState(username);
   const [userInfo, setUserInfo] = useState({});
   const portrait = window.innerHeight > window.innerWidth;
-  const [width, height] = useWindowSize();
 
-  function useWindowSize() {
-    const [size, setSize] = useState([0, 0]);
-    useLayoutEffect(() => {
-      function updateSize() {
-        setSize([window.innerWidth, window.innerHeight]);
-      }
-      window.addEventListener("resize", updateSize);
-      updateSize();
-      return () => window.removeEventListener("resize", updateSize);
-    }, []);
-    return size;
-  }
   const directToUser = (value) => history.push(`/${value}`);
 
   useEffect(() => {
@@ -51,7 +38,7 @@ function Sidebar({ username, userDegrees, transactions }) {
       collapsible={portrait}
       collapsedWidth={0}
     >
-      <Layout style={{ height: `${height}px` }}>
+      <Layout>
         <Content>
           <div className="sidebar-content">
             <h1>{`${userInfo.name} (${username})`}</h1>

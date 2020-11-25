@@ -1,4 +1,5 @@
 aside .ant-layout {
+  height: 100vh;
   background-color: #fff;
 }
 
@@ -31,12 +32,6 @@ aside .ant-layout {
 .sidebar-footer img {
   width: 160px;
   margin: 0 1em;
-}
-
-@media only screen and (max-width: 800px) {
-  .sidebar-footer img {
-    width: 120px;
-  }
 }
 
 .vercel {
@@ -86,4 +81,18 @@ aside .ant-layout {
 .ant-collapse-content {
   max-height: 50vh;
   overflow: scroll !important;
+}
+
+@media only screen and (max-width: 800px) {
+  .sidebar-footer img {
+    width: 120px;
+  }
+
+  .ant-collapse-content {
+    max-height: 30vh;
+  }
+
+  .ant-layout {
+    max-height: 85vh;
+  }
 }
