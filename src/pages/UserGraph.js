@@ -33,9 +33,11 @@ function UserGraph(props) {
       for (let i = 0; i < 3; i += 1) {
         if (i !== 0) {
           toSearch = new Set([...allUsers].filter((x) => !searched.has(x)));
-          for (let u of toSearch) {
-            if (!(u in userDegrees)) userDegrees[u] = i;
-          }
+          for (let u of toSearch) if (!(u in userDegrees)) userDegrees[u] = i;
+
+          let realUsername = matchUsername(allUsers);
+          if (realUsername && realUsername !== displayUsername)
+            setDisplayUsername(realUsername);
           setUserDegrees(userDegrees);
         }
 
@@ -72,13 +74,14 @@ function UserGraph(props) {
       }
       setUserDegrees(userDegrees);
 
-      let realUsername = matchUsername(allUsers);
-      userDegrees[realUsername] = 0;
-      setDisplayUsername(realUsername);
+      userDegrees[displayUsername] = 0;
 
       let users = [];
       for (let user of allUsers) users.push({ name: user });
-      setUserGraph({ nodes: users, links: links });
+
+      if (users.length === 0)
+        setUserGraph({ nodes: [{ name: displayUsername }], links: [] });
+      else setUserGraph({ nodes: users, links: links });
     };
 
     const matchUsername = (allUsers) => {
@@ -98,7 +101,11 @@ function UserGraph(props) {
           for (let t of data) {
             users.add(t.sender);
             users.add(t.recipient);
-            links.push({ from: t.sender, to: t.recipient });
+            links.push({
+              from: t.sender,
+              to: t.recipient,
+              name: `${t.sender} to ${t.recipient}: ${t.message}`,
+            });
             transactions.push(t);
           }
         }
