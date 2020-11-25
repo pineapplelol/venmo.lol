@@ -98,7 +98,11 @@ function UserGraph(props) {
           for (let t of data) {
             users.add(t.sender);
             users.add(t.recipient);
-            links.push({ from: t.sender, to: t.recipient });
+            links.push({
+              from: t.sender,
+              to: t.recipient,
+              name: `${t.sender} to ${t.recipient}: ${t.message}`,
+            });
             transactions.push(t);
           }
         }
