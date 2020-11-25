@@ -2,5 +2,12 @@
   align-items: center;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
   justify-content: center;
+}
+@media only screen and (max-width: 800px) {
+  .scene-container {
+    min-height: 100vh;
+  }
 }

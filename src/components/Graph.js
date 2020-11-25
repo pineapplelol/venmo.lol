@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { ForceGraph3D } from "react-force-graph";
 import SpriteText from "three-spritetext";
 import { useHistory } from "react-router-dom";
@@ -6,10 +6,25 @@ import { useHistory } from "react-router-dom";
 function Graph({ graph }) {
   const history = useHistory();
   const [cursor, setCursor] = useState("default");
+  const [width, height] = useWindowSize();
+
+  function useWindowSize() {
+    const [size, setSize] = useState([0, 0]);
+    useLayoutEffect(() => {
+      function updateSize() {
+        setSize([window.innerWidth, window.innerHeight]);
+      }
+      window.addEventListener("resize", updateSize);
+      updateSize();
+      return () => window.removeEventListener("resize", updateSize);
+    }, []);
+    return size;
+  }
 
   return (
     <div style={{ cursor: cursor }}>
       <ForceGraph3D
+        height={height}
         graphData={graph}
         nodeId="name"
         linkSource="from"
