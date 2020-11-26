@@ -21,27 +21,23 @@ function Sidebar({ username, userDegrees, transactions }) {
 
   const directToUser = (value) => history.push(`/${value}`);
 
-  useEffect(() => {
-    const getUserInfo = async () => {
-      await getUserInformation(username).then((data) => {
-        console.log(data);
-        setUserInfo(data);
-      });
-    };
-
-    getUserInfo();
-  }, [username]);
-
-  useEffect(() => {
-    if (transactions.length === 0) openNotification();
-  }, []);
-
   const openNotification = () => {
     notification["warning"]({
       message: `${username} is private!`,
       description: "User payment network is not available.",
     });
   };
+
+  useEffect(() => {
+    const getUserInfo = async () => {
+      await getUserInformation(username).then((data) => {
+        setUserInfo(data);
+        if (data.isPrivate) openNotification();
+      });
+    };
+
+    getUserInfo();
+  }, [username]);
 
   return (
     <Sider
