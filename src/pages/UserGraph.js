@@ -34,12 +34,12 @@ function UserGraph(props) {
         if (i !== 0) {
           toSearch = new Set([...allUsers].filter((x) => !searched.has(x)));
           for (let u of toSearch) if (!(u in userDegrees)) userDegrees[u] = i;
-
-          let realUsername = matchUsername(allUsers);
-          if (realUsername && realUsername !== displayUsername)
-            setDisplayUsername(realUsername);
           setUserDegrees(userDegrees);
         }
+
+        let realUsername = matchUsername(allUsers);
+        if (realUsername && realUsername !== displayUsername)
+          setDisplayUsername(realUsername);
 
         await searchDegree(toSearch).then((data) => {
           allUsers = new Set([...allUsers, ...data[0]]);
@@ -69,25 +69,25 @@ function UserGraph(props) {
         });
       }
 
-      for (let u of allUsers) {
-        if (!(u in userDegrees)) userDegrees[u] = 3;
-      }
+      for (let u of allUsers) if (!(u in userDegrees)) userDegrees[u] = 3;
       setUserDegrees(userDegrees);
 
-      userDegrees[displayUsername] = 0;
+      userDegrees[username] = 0;
 
       let users = [];
       for (let user of allUsers) users.push({ name: user });
 
       if (users.length === 0)
-        setUserGraph({ nodes: [{ name: displayUsername }], links: [] });
+        setUserGraph({ nodes: [{ name: username }], links: [] });
       else setUserGraph({ nodes: users, links: links });
     };
 
     const matchUsername = (allUsers) => {
+      if (allUsers.size === 0) return username;
       for (let u of allUsers) {
         if (u.toLowerCase() === username.toLowerCase()) return u;
       }
+      return username;
     };
 
     const searchDegree = async (toSearch) => {
@@ -120,7 +120,7 @@ function UserGraph(props) {
   return (
     <Layout>
       <Sidebar
-        username={displayUsername}
+        username={username}
         userDegrees={userDegrees}
         transactions={transactions}
       />
