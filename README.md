@@ -18,7 +18,7 @@ Clone this repository and `yarn && yarn start`. Visit [http://localhost:3000](ht
 
 The project requires an API to return public user information and transactions. It expects the format to be
 
-```json
+```
 {
   "info": {
     "name": string,
