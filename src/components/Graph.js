@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import { ForceGraph3D } from "react-force-graph";
+import ForceGraph3D from "react-force-graph-3d";
 import SpriteText from "three-spritetext";
 import { useHistory } from "react-router-dom";
 

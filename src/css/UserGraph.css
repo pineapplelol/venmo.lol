@@ -5,7 +5,9 @@
   min-height: 100vh;
   height: 100%;
   justify-content: center;
+  float: right;
 }
+
 @media only screen and (max-width: 800px) {
   .scene-container {
     min-height: 100vh;
