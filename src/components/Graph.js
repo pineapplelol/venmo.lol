@@ -1,12 +1,20 @@
+// @flow
 import React, { useState, useLayoutEffect } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
 import { useHistory } from 'react-router-dom';
 
-function Graph({ graph }) {
+import type { GraphData } from '../types';
+
+type Props = {
+  graph: GraphData,
+};
+
+function Graph(props: Props) {
+  const { graph } = props;
+
   const history = useHistory();
   const [cursor, setCursor] = useState('default');
-  const [width, height] = useWindowSize();
 
   function useWindowSize() {
     const [size, setSize] = useState([0, 0]);
@@ -20,6 +28,8 @@ function Graph({ graph }) {
     }, []);
     return size;
   }
+
+  const [, height] = useWindowSize();
 
   return (
     <div style={{ cursor }}>

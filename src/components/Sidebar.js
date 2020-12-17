@@ -1,8 +1,10 @@
+// @flow
 import React, { useState, useEffect } from 'react';
 import { Button, Collapse, Layout, Input, List, notification } from 'antd';
 import { useHistory } from 'react-router-dom';
 
-import { getUserInformation } from '../util/api.js';
+import { getUserInformation } from '../util/api';
+import type { Transaction } from '../types';
 import '../css/Sidebar.css';
 
 const { Panel } = Collapse;
@@ -12,7 +14,15 @@ const { Content, Sider, Footer } = Layout;
 const ListItem = List.Item;
 const ListItemMeta = List.Item.Meta;
 
-function Sidebar({ username, userDegrees, transactions }) {
+type Props = {
+  username: string,
+  userDegrees: {},
+  transactions: Array<Transaction>,
+};
+
+function Sidebar(props: Props) {
+  const { username, userDegrees, transactions } = props;
+
   const history = useHistory();
   const users = Object.keys(userDegrees);
   const [searchUser, setSearchUser] = useState(username);
