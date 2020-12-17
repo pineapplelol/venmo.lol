@@ -1,7 +1,7 @@
 {
   "name": "venmo.lol",
+  "homepage": "https://venmo.lol/",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "antd": "^4.6.2",
     "axios": "^0.20.0",
