@@ -35,9 +35,11 @@ function UserGraph(props: Props) {
       const links = [];
       const curTransactions = [];
 
-      for (const user of toSearch) {
-        const data = await getUserTransactions(user);
-        if (data) {
+      const searches = [];
+      for (const user of toSearch) searches.push(getUserTransactions(user));
+
+      await Promise.all(searches).then(allData => {
+        for (const data of allData) {
           for (const t of data) {
             users.add(t.sender);
             users.add(t.recipient);
@@ -49,14 +51,14 @@ function UserGraph(props: Props) {
             curTransactions.push(t);
           }
         }
-      }
+      });
 
       return [users, links, curTransactions];
     };
 
     const generateUserGraph = async () => {
       let allUsers = new Set();
-      const searched = new Set();
+      let searched = new Set();
       let toSearch = new Set([username]);
       const curUserDegrees = {};
 
@@ -78,6 +80,7 @@ function UserGraph(props: Props) {
         if (realUsername && realUsername !== displayUsername)
           setDisplayUsername(realUsername);
 
+        // eslint-disable-next-line no-await-in-loop
         await searchDegree(toSearch).then(data => {
           allUsers = new Set([...allUsers, ...data[0]]);
 
@@ -104,6 +107,8 @@ function UserGraph(props: Props) {
           }
           setTransactions(curTransactions);
         });
+
+        searched = new Set([...searched, ...toSearch]);
       }
 
       for (const u of allUsers)

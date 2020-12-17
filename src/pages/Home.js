@@ -1,3 +1,4 @@
+// @flow
 import React from 'react';
 import { Input } from 'antd';
 import { useHistory } from 'react-router-dom';
