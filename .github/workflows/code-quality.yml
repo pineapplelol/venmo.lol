@@ -86,7 +86,7 @@ jobs:
       - name: Cache dependencies
         uses: actions/cache@v2
         with:
-          path: client/node_modules
+          path: node_modules
           key: ${{ runner.os }}-cache
 
       - name: Install dependencies
