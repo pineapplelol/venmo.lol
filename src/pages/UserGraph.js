@@ -124,10 +124,8 @@ function UserGraph(props) {
         userDegrees={userDegrees}
         transactions={transactions}
       />
-      <Content>
-        <div className="graph">
-          <Graph graph={userGraph} />
-        </div>
+      <Content className="graph">
+        <Graph graph={userGraph} />
       </Content>
     </Layout>
   );
