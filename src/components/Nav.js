@@ -1,6 +1,6 @@
-import React from "react";
-
-import "../css/Nav.css";
+// @flow
+import React from 'react';
+import '../css/Nav.css';
 
 function Nav() {
   return (

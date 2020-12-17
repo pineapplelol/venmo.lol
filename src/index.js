@@ -1,18 +1,21 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Route, BrowserRouter as Router } from "react-router-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Route, BrowserRouter as Router } from 'react-router-dom';
 
-import Home from "./pages/Home";
-import UserGraph from "./pages/UserGraph";
+import Home from './pages/Home';
+import UserGraph from './pages/UserGraph';
 
-import "antd/dist/antd.css";
+import 'antd/dist/antd.css';
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Route path="/" exact component={Home} />
-      <Route path="/:id" render={(props) => <UserGraph {...props} />} />
+      <Route
+        path="/:username"
+        render={props => <UserGraph username={props.match.params.username} />}
+      />
     </Router>
   </React.StrictMode>,
-  document.getElementById("root")
+  document.getElementById('root'),
 );

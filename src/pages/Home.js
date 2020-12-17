@@ -1,10 +1,11 @@
-import React from "react";
-import { Input } from "antd";
-import { useHistory } from "react-router-dom";
+// @flow
+import React from 'react';
+import { Input } from 'antd';
+import { useHistory } from 'react-router-dom';
 
-import Nav from "../components/Nav";
-import Footer from "../components/Footer";
-import "../css/Home.css";
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
+import '../css/Home.css';
 
 const { Search } = Input;
 
@@ -21,7 +22,7 @@ function Home() {
           <p>Enter a username to explore their payment network.</p>
           <Search
             placeholder="Venmo username"
-            onSearch={(value) => {
+            onSearch={value => {
               history.push(`/${value}`);
             }}
             size="large"
