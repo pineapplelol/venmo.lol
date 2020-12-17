@@ -11,7 +11,10 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Route path="/" exact component={Home} />
-      <Route path="/:id" render={props => <UserGraph {...props} />} />
+      <Route
+        path="/:username"
+        render={props => <UserGraph username={props.match.params.username} />}
+      />
     </Router>
   </React.StrictMode>,
   document.getElementById('root'),

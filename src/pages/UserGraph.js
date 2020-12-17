@@ -1,15 +1,20 @@
+// @flow
 import React, { useState, useEffect } from 'react';
 import { Layout } from 'antd';
 
 import Graph from '../components/Graph';
 import Sidebar from '../components/Sidebar';
-import { getUserTransactions } from '../util/api.js';
+import { getUserTransactions } from '../util/api';
 import '../css/UserGraph.css';
 
 const { Content } = Layout;
 
-function UserGraph(props) {
-  const username = props.match.params.id;
+type Props = {
+  username: string,
+};
+
+function UserGraph(props: Props) {
+  const { username } = props;
 
   const [displayUsername, setDisplayUsername] = useState(username);
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
@@ -17,23 +22,56 @@ function UserGraph(props) {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
+    const matchUsername = allUsers => {
+      if (allUsers.size === 0) return username;
+      for (const u of allUsers) {
+        if (u.toLowerCase() === username.toLowerCase()) return u;
+      }
+      return username;
+    };
+
+    const searchDegree = async toSearch => {
+      const users = new Set();
+      const links = [];
+      const curTransactions = [];
+
+      for (const user of toSearch) {
+        const data = await getUserTransactions(user);
+        if (data) {
+          for (const t of data) {
+            users.add(t.sender);
+            users.add(t.recipient);
+            links.push({
+              from: t.sender,
+              to: t.recipient,
+              name: `${t.sender} to ${t.recipient}: ${t.message}`,
+            });
+            curTransactions.push(t);
+          }
+        }
+      }
+
+      return [users, links, curTransactions];
+    };
+
     const generateUserGraph = async () => {
       let allUsers = new Set();
       const searched = new Set();
       let toSearch = new Set([username]);
-      const userDegrees = {};
+      const curUserDegrees = {};
 
       const seenLinks = new Set();
       const links = [];
 
       const seenTransactions = new Set();
-      const transactions = [];
+      const curTransactions = [];
 
       for (let i = 0; i < 3; i += 1) {
         if (i !== 0) {
           toSearch = new Set([...allUsers].filter(x => !searched.has(x)));
-          for (const u of toSearch) if (!(u in userDegrees)) userDegrees[u] = i;
-          setUserDegrees(userDegrees);
+          for (const u of toSearch)
+            if (!(u in curUserDegrees)) curUserDegrees[u] = i;
+          setUserDegrees(curUserDegrees);
         }
 
         const realUsername = matchUsername(allUsers);
@@ -61,17 +99,18 @@ function UserGraph(props) {
             const k = `${t.sender}${t.date}`;
             if (!seenTransactions.has(k)) {
               seenTransactions.add(k);
-              transactions.push(t);
+              curTransactions.push(t);
             }
           }
-          setTransactions(transactions);
+          setTransactions(curTransactions);
         });
       }
 
-      for (const u of allUsers) if (!(u in userDegrees)) userDegrees[u] = 3;
-      setUserDegrees(userDegrees);
+      for (const u of allUsers)
+        if (!(u in curUserDegrees)) curUserDegrees[u] = 3;
+      setUserDegrees(curUserDegrees);
 
-      userDegrees[username] = 0;
+      curUserDegrees[username] = 0;
 
       const users = [];
       for (const user of allUsers) users.push({ name: user });
@@ -79,38 +118,6 @@ function UserGraph(props) {
       if (users.length === 0)
         setUserGraph({ nodes: [{ name: username }], links: [] });
       else setUserGraph({ nodes: users, links });
-    };
-
-    const matchUsername = allUsers => {
-      if (allUsers.size === 0) return username;
-      for (const u of allUsers) {
-        if (u.toLowerCase() === username.toLowerCase()) return u;
-      }
-      return username;
-    };
-
-    const searchDegree = async toSearch => {
-      const users = new Set();
-      const links = [];
-      const transactions = [];
-
-      for (const user of toSearch) {
-        const data = await getUserTransactions(user);
-        if (data) {
-          for (const t of data) {
-            users.add(t.sender);
-            users.add(t.recipient);
-            links.push({
-              from: t.sender,
-              to: t.recipient,
-              name: `${t.sender} to ${t.recipient}: ${t.message}`,
-            });
-            transactions.push(t);
-          }
-        }
-      }
-
-      return [users, links, transactions];
     };
 
     generateUserGraph();
