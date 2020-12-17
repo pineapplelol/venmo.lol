@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { Button, Collapse, Layout, Input, List, notification } from "antd";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Button, Collapse, Layout, Input, List, notification } from 'antd';
+import { useHistory } from 'react-router-dom';
 
-import { getUserInformation } from "../util/api.js";
-import "../css/Sidebar.css";
+import { getUserInformation } from '../util/api.js';
+import '../css/Sidebar.css';
 
 const { Panel } = Collapse;
 const { Search } = Input;
@@ -19,18 +19,18 @@ function Sidebar({ username, userDegrees, transactions }) {
   const [userInfo, setUserInfo] = useState({});
   const portrait = window.innerHeight > window.innerWidth;
 
-  const directToUser = (value) => history.push(`/${value}`);
+  const directToUser = value => history.push(`/${value}`);
 
   const openNotification = () => {
-    notification["warning"]({
+    notification.warning({
       message: `${username} is private!`,
-      description: "User payment network is not available.",
+      description: 'User payment network is not available.',
     });
   };
 
   useEffect(() => {
     const getUserInfo = async () => {
-      await getUserInformation(username).then((data) => {
+      await getUserInformation(username).then(data => {
         setUserInfo(data);
         if (data.isPrivate) openNotification();
       });
@@ -41,7 +41,7 @@ function Sidebar({ username, userDegrees, transactions }) {
 
   return (
     <Sider
-      width={portrait ? "80%" : "30%"}
+      width={portrait ? '80%' : '30%'}
       theme="light"
       collapsible={portrait}
       collapsedWidth={0}
@@ -53,9 +53,9 @@ function Sidebar({ username, userDegrees, transactions }) {
             <Search
               value={searchUser}
               onSearch={directToUser}
-              onChange={(e) => setSearchUser(e.target.value)}
+              onChange={e => setSearchUser(e.target.value)}
               enterButton
-              width={"80%"}
+              width="80%"
             />
             <div className="sidebar-information">
               <Collapse accordion>
@@ -71,7 +71,7 @@ function Sidebar({ username, userDegrees, transactions }) {
                 <Panel header="Users in Graph" key="users" extra={users.length}>
                   <List
                     dataSource={users}
-                    renderItem={(user) => (
+                    renderItem={user => (
                       <Button
                         className="user-list-card"
                         onClick={() => {
@@ -96,16 +96,16 @@ function Sidebar({ username, userDegrees, transactions }) {
                 <Panel
                   header="Transactions"
                   key="transactions"
-                  extra={transactions.length !== 0 ? transactions.length : ""}
+                  extra={transactions.length !== 0 ? transactions.length : ''}
                 >
                   <List
                     dataSource={transactions}
-                    renderItem={(t) => (
+                    renderItem={t => (
                       <ListItem>
                         <ListItemMeta
                           title={
                             <div className="user-list-row">
-                              {t.transactionType === "charged"
+                              {t.transactionType === 'charged'
                                 ? `${t.recipient} charged ${t.sender}`
                                 : `${t.sender} paid ${t.recipient}`}
                               <div className="user-list-row-description">
