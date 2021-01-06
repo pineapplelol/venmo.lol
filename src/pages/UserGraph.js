@@ -130,19 +130,13 @@ function UserGraph(props: Props) {
       if (!grow) setUserGraph({ nodes: users, links });
       else {
         let totalUsers = allUsers;
-        for (const x of userGraph.nodes) {
-          totalUsers.add(x.name);
-        }
+        for (const x of userGraph.nodes) totalUsers.add(x.name);
         let realTotalUsers = [];
         for (const user of totalUsers) realTotalUsers.push({ name: user });
 
-        console.log(realTotalUsers);
         let totalLinks = links;
         for (const x of userGraph.links) {
-          const item = { from: x.from, to: x.to, name: x.name };
-          if (totalLinks.indexOf(item) === -1) {
-            totalLinks.push(item);
-          }
+          totalLinks.push({ from: x.from, to: x.to, name: x.name });
         }
         setUserGraph({ nodes: realTotalUsers, links: totalLinks });
       }

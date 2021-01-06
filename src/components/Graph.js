@@ -2,7 +2,6 @@
 import React, { useState, useLayoutEffect } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
-import { useHistory } from 'react-router-dom';
 
 import type { GraphData } from '../types';
 
@@ -14,7 +13,6 @@ type Props = {
 function Graph(props: Props) {
   const { graph, addNode } = props;
 
-  const history = useHistory();
   const [cursor, setCursor] = useState('default');
 
   function useWindowSize() {
@@ -57,7 +55,6 @@ function Graph(props: Props) {
         nodeThreeObjectExtend
         nodeRelSize={3}
         onNodeClick={value => {
-          // history.push(`/${value.name}`);
           addNode(value.name);
         }}
         nodeLabel=""
