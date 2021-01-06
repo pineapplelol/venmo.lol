@@ -10,133 +10,158 @@ import '../css/UserGraph.css';
 const { Content } = Layout;
 
 type Props = {
-  username: string,
+  pageUser: string,
 };
 
 function UserGraph(props: Props) {
-  const { username } = props;
+  const { pageUser } = props;
 
-  const [displayUsername, setDisplayUsername] = useState(username);
+  const [displayUsername, setDisplayUsername] = useState(pageUser);
   const [userGraph, setUserGraph] = useState({ nodes: [], links: [] });
   const [userDegrees, setUserDegrees] = useState({});
   const [transactions, setTransactions] = useState([]);
 
-  useEffect(() => {
-    const matchUsername = allUsers => {
-      if (allUsers.size === 0) return username;
-      for (const u of allUsers) {
-        if (u.toLowerCase() === username.toLowerCase()) return u;
+  const addNode = (username: string) => {
+    generateUserGraph(username, true);
+  };
+
+  const matchUsername = allUsers => {
+    if (allUsers.size === 0) return pageUser;
+    for (const u of allUsers) {
+      if (u.toLowerCase() === pageUser.toLowerCase()) return u;
+    }
+    return pageUser;
+  };
+
+  const searchDegree = async toSearch => {
+    const users = new Set();
+    const links = [];
+    const curTransactions = [];
+
+    const searches = [];
+    for (const user of toSearch) searches.push(getUserTransactions(user));
+
+    await Promise.all(searches).then(allData => {
+      for (const data of allData) {
+        for (const t of data) {
+          users.add(t.sender);
+          users.add(t.recipient);
+          links.push({
+            from: t.sender,
+            to: t.recipient,
+            name: `${t.sender} to ${t.recipient}: ${t.message}`,
+          });
+          curTransactions.push(t);
+        }
       }
-      return username;
-    };
+    });
 
-    const searchDegree = async toSearch => {
-      const users = new Set();
-      const links = [];
-      const curTransactions = [];
+    return [users, links, curTransactions];
+  };
 
-      const searches = [];
-      for (const user of toSearch) searches.push(getUserTransactions(user));
+  const generateUserGraph = async (username, grow = false) => {
+    let allUsers = new Set();
+    let searched = new Set();
+    let toSearch = new Set([username]);
+    const curUserDegrees = {};
 
-      await Promise.all(searches).then(allData => {
-        for (const data of allData) {
-          for (const t of data) {
-            users.add(t.sender);
-            users.add(t.recipient);
-            links.push({
-              from: t.sender,
-              to: t.recipient,
-              name: `${t.sender} to ${t.recipient}: ${t.message}`,
-            });
-            curTransactions.push(t);
-          }
-        }
-      });
+    const seenLinks = new Set();
+    const links = [];
 
-      return [users, links, curTransactions];
-    };
+    const seenTransactions = new Set();
+    const curTransactions = [];
 
-    const generateUserGraph = async () => {
-      let allUsers = new Set();
-      let searched = new Set();
-      let toSearch = new Set([username]);
-      const curUserDegrees = {};
+    for (let i = 0; i < 3; i += 1) {
+      if (i !== 0) {
+        toSearch = new Set([...allUsers].filter(x => !searched.has(x)));
+        for (const u of toSearch)
+          if (!(u in curUserDegrees)) curUserDegrees[u] = i;
+        setUserDegrees(curUserDegrees);
+      }
 
-      const seenLinks = new Set();
-      const links = [];
-
-      const seenTransactions = new Set();
-      const curTransactions = [];
-
-      for (let i = 0; i < 3; i += 1) {
-        if (i !== 0) {
-          toSearch = new Set([...allUsers].filter(x => !searched.has(x)));
-          for (const u of toSearch)
-            if (!(u in curUserDegrees)) curUserDegrees[u] = i;
-          setUserDegrees(curUserDegrees);
-        }
-
+      if (!grow) {
         const realUsername = matchUsername(allUsers);
         if (realUsername && realUsername !== displayUsername)
           setDisplayUsername(realUsername);
-
-        // eslint-disable-next-line no-await-in-loop
-        await searchDegree(toSearch).then(data => {
-          allUsers = new Set([...allUsers, ...data[0]]);
-
-          const users = [];
-          for (const user of allUsers) users.push({ name: user });
-
-          for (const l of data[1]) {
-            const k = `${l.to}${l.from}`;
-            if (!seenLinks.has(k)) {
-              seenLinks.add(k);
-              links.push(l);
-            }
-          }
-          setUserGraph({ nodes: users, links: [] });
-          // https://github.com/vasturiano/react-force-graph/issues/238
-          // setUserGraph({ nodes: users, links: [...links] });
-
-          for (const t of data[2]) {
-            const k = `${t.sender}${t.date}`;
-            if (!seenTransactions.has(k)) {
-              seenTransactions.add(k);
-              curTransactions.push(t);
-            }
-          }
-          setTransactions(curTransactions);
-        });
-
-        searched = new Set([...searched, ...toSearch]);
       }
 
-      for (const u of allUsers)
-        if (!(u in curUserDegrees)) curUserDegrees[u] = 3;
-      setUserDegrees(curUserDegrees);
+      // eslint-disable-next-line no-await-in-loop
+      await searchDegree(toSearch).then(data => {
+        allUsers = new Set([...allUsers, ...data[0]]);
 
-      curUserDegrees[username] = 0;
+        const users = [];
+        for (const user of allUsers) users.push({ name: user });
 
-      const users = [];
-      for (const user of allUsers) users.push({ name: user });
+        for (const l of data[1]) {
+          const k = `${l.to}${l.from}`;
+          if (!seenLinks.has(k)) {
+            seenLinks.add(k);
+            links.push(l);
+          }
+        }
+        if (!grow) setUserGraph({ nodes: users, links: [] });
+        // https://github.com/vasturiano/react-force-graph/issues/238
+        // setUserGraph({ nodes: users, links: [...links] });
 
-      if (users.length === 0)
-        setUserGraph({ nodes: [{ name: username }], links: [] });
-      else setUserGraph({ nodes: users, links });
-    };
+        for (const t of data[2]) {
+          const k = `${t.sender}${t.date}`;
+          if (!seenTransactions.has(k)) {
+            seenTransactions.add(k);
+            curTransactions.push(t);
+          }
+        }
+        setTransactions(curTransactions);
+      });
 
-    generateUserGraph();
-  }, [username]);
+      searched = new Set([...searched, ...toSearch]);
+    }
+
+    for (const u of allUsers) if (!(u in curUserDegrees)) curUserDegrees[u] = 3;
+    setUserDegrees(curUserDegrees);
+
+    curUserDegrees[username] = 0;
+
+    const users = [];
+    for (const user of allUsers) users.push({ name: user });
+
+    if (users.length === 0)
+      setUserGraph({ nodes: [{ name: username }], links: [] });
+    else {
+      if (!grow) setUserGraph({ nodes: users, links });
+      else {
+        let totalUsers = allUsers;
+        for (const x of userGraph.nodes) {
+          totalUsers.add(x.name);
+        }
+        let realTotalUsers = [];
+        for (const user of totalUsers) realTotalUsers.push({ name: user });
+
+        console.log(realTotalUsers);
+        let totalLinks = links;
+        for (const x of userGraph.links) {
+          const item = { from: x.from, to: x.to, name: x.name };
+          if (totalLinks.indexOf(item) === -1) {
+            totalLinks.push(item);
+          }
+        }
+        setUserGraph({ nodes: realTotalUsers, links: totalLinks });
+      }
+    }
+  };
+
+  useEffect(() => {
+    generateUserGraph(pageUser);
+  }, [pageUser]);
 
   return (
     <Layout>
       <Sidebar
-        username={username}
+        username={pageUser}
         userDegrees={userDegrees}
         transactions={transactions}
       />
       <Content className="graph">
-        <Graph graph={userGraph} />
+        <Graph graph={userGraph} addNode={addNode} />
       </Content>
     </Layout>
   );

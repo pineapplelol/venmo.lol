@@ -45,7 +45,6 @@ function Sidebar(props: Props) {
         if (data.isPrivate) openNotification();
       });
     };
-
     getUserInfo();
   }, [username]);
 

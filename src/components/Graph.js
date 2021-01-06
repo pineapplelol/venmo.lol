@@ -8,10 +8,11 @@ import type { GraphData } from '../types';
 
 type Props = {
   graph: GraphData,
+  addNode: string => void,
 };
 
 function Graph(props: Props) {
-  const { graph } = props;
+  const { graph, addNode } = props;
 
   const history = useHistory();
   const [cursor, setCursor] = useState('default');
@@ -56,7 +57,8 @@ function Graph(props: Props) {
         nodeThreeObjectExtend
         nodeRelSize={3}
         onNodeClick={value => {
-          history.push(`/${value.name}`);
+          // history.push(`/${value.name}`);
+          addNode(value.name);
         }}
         nodeLabel=""
         onNodeHover={node =>
