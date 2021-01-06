@@ -21,10 +21,6 @@ function UserGraph(props: Props) {
   const [userDegrees, setUserDegrees] = useState({});
   const [transactions, setTransactions] = useState([]);
 
-  const addNode = (username: string) => {
-    generateUserGraph(username, true);
-  };
-
   const matchUsername = allUsers => {
     if (allUsers.size === 0) return pageUser;
     for (const u of allUsers) {
@@ -126,21 +122,22 @@ function UserGraph(props: Props) {
 
     if (users.length === 0)
       setUserGraph({ nodes: [{ name: username }], links: [] });
+    else if (!grow) setUserGraph({ nodes: users, links });
     else {
-      if (!grow) setUserGraph({ nodes: users, links });
-      else {
-        let totalUsers = allUsers;
-        for (const x of userGraph.nodes) totalUsers.add(x.name);
-        let realTotalUsers = [];
-        for (const user of totalUsers) realTotalUsers.push({ name: user });
+      const totalUsers = allUsers;
+      for (const x of userGraph.nodes) totalUsers.add(x.name);
+      const realTotalUsers = [];
+      for (const user of totalUsers) realTotalUsers.push({ name: user });
 
-        let totalLinks = links;
-        for (const x of userGraph.links) {
-          totalLinks.push({ from: x.from, to: x.to, name: x.name });
-        }
-        setUserGraph({ nodes: realTotalUsers, links: totalLinks });
+      for (const x of userGraph.links) {
+        links.push({ from: x.from, to: x.to, name: x.name });
       }
+      setUserGraph({ nodes: realTotalUsers, links });
     }
+  };
+
+  const addNode = (username: string) => {
+    generateUserGraph(username, true);
   };
 
   useEffect(() => {

@@ -2,7 +2,7 @@
 
 export type GraphData = {
   nodes: Array<{ name: string }>,
-  links: Array<{ to: string, from: string }>,
+  links: Array<{ to: string, from: string, name: string }>,
 };
 
 export type Transaction = {
