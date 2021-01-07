@@ -77,12 +77,8 @@ function UserGraph(props: Props) {
   const generateUserGraph = async (username, grow = false, degree = 3) => {
     let allUsers = new Set();
     let searched = new Set();
-    for (const x of userGraph.nodes) {
-      searched.add(x.name);
-    }
-    // add all users {x.name} into searched set
     let toSearch = new Set([username]);
-    const curUserDegrees = {};
+    const curUserDegrees = grow ? userDegrees : {};
 
     const seenLinks = new Set();
     const links = [];
@@ -90,11 +86,13 @@ function UserGraph(props: Props) {
     const seenTransactions = new Set();
     const curTransactions = [];
 
-    for (let i = userDegrees[username] ?? 0; i < degree; i += 1) {
-      if (i !== 0) {
+    const baseDegree = userDegrees[username] ?? 0;
+    for (let i = baseDegree; i < baseDegree + degree; i += 1) {
+      if (i !== baseDegree) {
         toSearch = new Set([...allUsers].filter(x => !searched.has(x)));
-        for (const u of toSearch)
-          if (!(u in curUserDegrees)) curUserDegrees[u] = i;
+        for (const u of toSearch) {
+          if (!(u in userDegrees)) curUserDegrees[u] = i;
+        }
         setUserDegrees(curUserDegrees);
       }
 
@@ -135,9 +133,11 @@ function UserGraph(props: Props) {
       searched = new Set([...searched, ...toSearch]);
     }
 
-    for (const u of allUsers) if (!(u in curUserDegrees)) curUserDegrees[u] = 3;
-    curUserDegrees[username] = 0;
-    if (!grow) setUserDegrees(curUserDegrees);
+    for (const u of allUsers) {
+      if (!(u in curUserDegrees)) curUserDegrees[u] = baseDegree + degree;
+    }
+    curUserDegrees[username] = baseDegree;
+    setUserDegrees(curUserDegrees);
 
     const users = [];
     for (const user of allUsers) users.push({ name: user });
@@ -145,15 +145,19 @@ function UserGraph(props: Props) {
     if (users.length === 0 && !grow) {
       setUserGraph({ nodes: [{ name: username }], links: [] });
     } else {
-      const totalUsers = allUsers;
-      for (const x of userGraph.nodes) totalUsers.add(x.name);
-      const realTotalUsers = [];
-      for (const user of totalUsers) realTotalUsers.push({ name: user });
+      if (grow) {
+        const totalUsers = allUsers;
+        for (const x of userGraph.nodes) totalUsers.add(x.name);
+        const realTotalUsers = [];
+        for (const user of totalUsers) realTotalUsers.push({ name: user });
 
-      for (const x of userGraph.links) {
-        links.push({ from: x.from, to: x.to, name: x.name });
+        for (const x of userGraph.links) {
+          links.push({ from: x.from, to: x.to, name: x.name });
+        }
+        setUserGraph({ nodes: realTotalUsers, links });
+      } else {
+        setUserGraph({ nodes: users, links });
       }
-      setUserGraph({ nodes: realTotalUsers, links });
     }
   };
 
