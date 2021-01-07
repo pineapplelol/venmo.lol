@@ -135,7 +135,7 @@ function UserGraph(props: Props) {
     const users = [];
     for (const user of allUsers) users.push({ name: user });
 
-    if (users.length === 0n && !grow) {
+    if (users.length === 0 && !grow) {
       setUserGraph({ nodes: [{ name: username }], links: [] });
     } else {
       const totalUsers = allUsers;
