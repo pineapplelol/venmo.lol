@@ -129,17 +129,15 @@ function UserGraph(props: Props) {
     }
 
     for (const u of allUsers) if (!(u in curUserDegrees)) curUserDegrees[u] = 3;
-    setUserDegrees(curUserDegrees);
-
     curUserDegrees[username] = 0;
+    setUserDegrees(curUserDegrees);
 
     const users = [];
     for (const user of allUsers) users.push({ name: user });
 
-    if (users.length === 0)
+    if (users.length === 0n && !grow) {
       setUserGraph({ nodes: [{ name: username }], links: [] });
-    else if (!grow) setUserGraph({ nodes: users, links });
-    else {
+    } else {
       const totalUsers = allUsers;
       for (const x of userGraph.nodes) totalUsers.add(x.name);
       const realTotalUsers = [];
