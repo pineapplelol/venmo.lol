@@ -116,9 +116,11 @@ function UserGraph(props: Props) {
             links.push(l);
           }
         }
-        if (!grow) setUserGraph({ nodes: users, links: [] });
-        // https://github.com/vasturiano/react-force-graph/issues/238
-        // setUserGraph({ nodes: users, links: [...links] });
+        if (!grow) {
+          setUserGraph({ nodes: users, links: [] });
+          // https://github.com/vasturiano/react-force-graph/issues/238
+          // setUserGraph({ nodes: users, links: [...links] });
+        }
 
         for (const t of data[2]) {
           const k = `${t.sender}${t.date}`;
