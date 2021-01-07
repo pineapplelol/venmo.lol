@@ -25,7 +25,7 @@ function UserGraph(props: Props) {
    * This will match the pageUser to the correct username. Specifically, if
    * someone searches 'User' and their venmo username is 'user', then it will find
    * 'user' in the set of returned usernames and correct it.
-   * @param {Set<string>} allUsers
+   * @param {Set<string>} allUsers - a list of all users found during the search.
    */
   const matchUsername = allUsers => {
     if (allUsers.size === 0) return pageUser;
@@ -38,7 +38,7 @@ function UserGraph(props: Props) {
   /**
    * Will search a single degree of all the users in toSearch. Will return all
    * new users, links, and transactions.
-   * @param {Set<String>} toSearch set of all users to search a single degree of.
+   * @param {Set<String>} toSearch - set of all users to search a single degree of.
    */
   const searchDegree = async toSearch => {
     const users = new Set();
@@ -67,12 +67,14 @@ function UserGraph(props: Props) {
   };
 
   /**
-   * Will generate a user graph to be displayed given a username.
-   * @param {string} username the user to for which the graph will be generated.
-   * @param {boolean} grow if there is an existing graph to add to. Will not change
+   * Will generate a user graph to be displayed given a username. Searches to degree of 3
+   * for a given user.
+   * @param {string} username - the user to for which the graph will be generated.
+   * @param {boolean} grow - if there is an existing graph to add to. Will not change
    *                       the user degrees.
+   * @param {number} degree - the degree to search to for the username.
    */
-  const generateUserGraph = async (username, grow = false) => {
+  const generateUserGraph = async (username, grow = false, degree = 3) => {
     let allUsers = new Set();
     let searched = new Set();
     let toSearch = new Set([username]);
@@ -84,7 +86,7 @@ function UserGraph(props: Props) {
     const seenTransactions = new Set();
     const curTransactions = [];
 
-    for (let i = 0; i < 3; i += 1) {
+    for (let i = 0; i < degree; i += 1) {
       if (i !== 0) {
         toSearch = new Set([...allUsers].filter(x => !searched.has(x)));
         for (const u of toSearch)
@@ -153,7 +155,7 @@ function UserGraph(props: Props) {
 
   /**
    * Wrapper function to add a user search to graph.
-   * @param {string} username the user to search and add to graph.
+   * @param {string} username - the user to search and add to graph.
    */
   const addNode = (username: string) => {
     generateUserGraph(username, true);
