@@ -31,14 +31,14 @@ function Sidebar(props: Props) {
 
   const directToUser = value => history.push(`/${value}`);
 
-  const openNotification = () => {
-    notification.warning({
-      message: `${username} is private!`,
-      description: 'User payment network is not available.',
-    });
-  };
-
   useEffect(() => {
+    const openNotification = () => {
+      notification.warning({
+        message: `${username} is private!`,
+        description: 'User payment network is not available.',
+      });
+    };
+
     const getUserInfo = async () => {
       await getUserInformation(username).then(data => {
         setUserInfo(data);
