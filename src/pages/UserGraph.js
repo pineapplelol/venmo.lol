@@ -21,6 +21,12 @@ function UserGraph(props: Props) {
   const [userDegrees, setUserDegrees] = useState({});
   const [transactions, setTransactions] = useState([]);
 
+  /**
+   * This will match the pageUser to the correct username. Specifically, if
+   * someone searches 'User' and their venmo username is 'user', then it will find
+   * 'user' in the set of returned usernames and correct it.
+   * @param {Set<string>} allUsers
+   */
   const matchUsername = allUsers => {
     if (allUsers.size === 0) return pageUser;
     for (const u of allUsers) {
@@ -29,6 +35,11 @@ function UserGraph(props: Props) {
     return pageUser;
   };
 
+  /**
+   * Will search a single degree of all the users in toSearch. Will return all
+   * new users, links, and transactions.
+   * @param {Set<String>} toSearch set of all users to search a single degree of.
+   */
   const searchDegree = async toSearch => {
     const users = new Set();
     const links = [];
@@ -55,6 +66,11 @@ function UserGraph(props: Props) {
     return [users, links, curTransactions];
   };
 
+  /**
+   * Will generate a user graph to be displayed given a username.
+   * @param {string} username the user to for which the graph will be generated.
+   * @param {boolean} grow if there is an existing graph to add to.
+   */
   const generateUserGraph = async (username, grow = false) => {
     let allUsers = new Set();
     let searched = new Set();
@@ -136,6 +152,10 @@ function UserGraph(props: Props) {
     }
   };
 
+  /**
+   * Wrapper function to add a user search to graph.
+   * @param {string} username the user to search and add to graph.
+   */
   const addNode = (username: string) => {
     generateUserGraph(username, true);
   };
