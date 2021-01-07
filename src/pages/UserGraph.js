@@ -69,7 +69,8 @@ function UserGraph(props: Props) {
   /**
    * Will generate a user graph to be displayed given a username.
    * @param {string} username the user to for which the graph will be generated.
-   * @param {boolean} grow if there is an existing graph to add to.
+   * @param {boolean} grow if there is an existing graph to add to. Will not change
+   *                       the user degrees.
    */
   const generateUserGraph = async (username, grow = false) => {
     let allUsers = new Set();
@@ -88,7 +89,7 @@ function UserGraph(props: Props) {
         toSearch = new Set([...allUsers].filter(x => !searched.has(x)));
         for (const u of toSearch)
           if (!(u in curUserDegrees)) curUserDegrees[u] = i;
-        setUserDegrees(curUserDegrees);
+        if (!grow) setUserDegrees(curUserDegrees);
       }
 
       if (!grow) {
@@ -130,7 +131,7 @@ function UserGraph(props: Props) {
 
     for (const u of allUsers) if (!(u in curUserDegrees)) curUserDegrees[u] = 3;
     curUserDegrees[username] = 0;
-    setUserDegrees(curUserDegrees);
+    if (!grow) setUserDegrees(curUserDegrees);
 
     const users = [];
     for (const user of allUsers) users.push({ name: user });
