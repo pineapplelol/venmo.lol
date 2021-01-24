@@ -29,7 +29,7 @@ function Sidebar(props: Props) {
   const [userInfo, setUserInfo] = useState({});
   const portrait = window.innerHeight > window.innerWidth;
 
-  const directToUser = value => history.push(`/${value}`);
+  const directToUser = (value) => history.push(`/${value}`);
 
   useEffect(() => {
     const openNotification = () => {
@@ -40,7 +40,7 @@ function Sidebar(props: Props) {
     };
 
     const getUserInfo = async () => {
-      await getUserInformation(username).then(data => {
+      await getUserInformation(username).then((data) => {
         setUserInfo(data);
         if (data.isPrivate) openNotification();
       });
@@ -63,7 +63,7 @@ function Sidebar(props: Props) {
             <Search
               value={searchUser}
               onSearch={directToUser}
-              onChange={e => setSearchUser(e.target.value)}
+              onChange={(e) => setSearchUser(e.target.value)}
               enterButton
               width="80%"
             />
@@ -81,7 +81,7 @@ function Sidebar(props: Props) {
                 <Panel header="Users in Graph" key="users" extra={users.length}>
                   <List
                     dataSource={users}
-                    renderItem={user => (
+                    renderItem={(user) => (
                       <Button
                         className="user-list-card"
                         onClick={() => {
@@ -110,7 +110,7 @@ function Sidebar(props: Props) {
                 >
                   <List
                     dataSource={transactions}
-                    renderItem={t => (
+                    renderItem={(t) => (
                       <ListItem>
                         <ListItemMeta
                           title={

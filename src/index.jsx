@@ -13,7 +13,7 @@ ReactDOM.render(
       <Route path="/" exact component={Home} />
       <Route
         path="/:username"
-        render={props => <UserGraph pageUser={props.match.params.username} />}
+        render={(props) => <UserGraph pageUser={props.match.params.username} />}
       />
     </Router>
   </React.StrictMode>,

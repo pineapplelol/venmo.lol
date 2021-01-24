@@ -22,7 +22,7 @@ function Home() {
           <p>Enter a username to explore their payment network.</p>
           <Search
             placeholder="Venmo username"
-            onSearch={value => {
+            onSearch={(value) => {
               history.push(`/${value}`);
             }}
             size="large"
