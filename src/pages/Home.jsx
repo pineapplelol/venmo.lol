@@ -5,11 +5,13 @@ import { useHistory } from 'react-router-dom';
 
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+
+import type { Node } from 'react';
 import '../css/Home.css';
 
 const { Search } = Input;
 
-function Home() {
+function Home(): Node {
   const history = useHistory();
 
   return (
@@ -22,7 +24,7 @@ function Home() {
           <p>Enter a username to explore their payment network.</p>
           <Search
             placeholder="Venmo username"
-            onSearch={value => {
+            onSearch={(value) => {
               history.push(`/${value}`);
             }}
             size="large"

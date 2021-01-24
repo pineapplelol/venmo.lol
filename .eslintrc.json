@@ -30,7 +30,6 @@
       }
     ],
     "prettier/prettier": "error",
-    "react/jsx-filename-extension": [1, { "extensions": [".js", "jsx"] }],
     "no-restricted-syntax": "off",
     "no-loop-func": "off"
   }

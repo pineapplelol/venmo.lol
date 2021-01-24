@@ -3,14 +3,15 @@ import React, { useState, useLayoutEffect } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
 
+import type { Node } from 'react';
 import type { GraphData } from '../types';
 
 type Props = {
   graph: GraphData,
-  addNode: string => void,
+  addNode: (string) => void,
 };
 
-function Graph(props: Props) {
+function Graph(props: Props): Node {
   const { graph, addNode } = props;
 
   const [cursor, setCursor] = useState('default');
@@ -45,7 +46,7 @@ function Graph(props: Props) {
         linkWidth={1.5}
         linkDirectionalParticles={4}
         linkDirectionalParticleWidth={1}
-        nodeThreeObject={node => {
+        nodeThreeObject={(node) => {
           const sprite = new SpriteText(node.name);
           sprite.color = node.color;
           sprite.textHeight = 4;
@@ -54,11 +55,11 @@ function Graph(props: Props) {
         }}
         nodeThreeObjectExtend
         nodeRelSize={3}
-        onNodeClick={value => {
+        onNodeClick={(value) => {
           addNode(value.name);
         }}
         nodeLabel=""
-        onNodeHover={node =>
+        onNodeHover={(node) =>
           node ? setCursor('pointer') : setCursor('default')
         }
       />

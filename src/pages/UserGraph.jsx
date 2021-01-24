@@ -5,6 +5,7 @@ import { Layout } from 'antd';
 import Graph from '../components/Graph';
 import Sidebar from '../components/Sidebar';
 import { getUserTransactions } from '../util/api';
+import type { Node } from 'react';
 import '../css/UserGraph.css';
 
 const { Content } = Layout;
@@ -13,7 +14,7 @@ type Props = {
   pageUser: string,
 };
 
-function UserGraph(props: Props) {
+function UserGraph(props: Props): Node {
   const { pageUser } = props;
 
   const [displayUsername, setDisplayUsername] = useState(pageUser);
@@ -27,7 +28,7 @@ function UserGraph(props: Props) {
    * 'user' in the set of returned usernames and correct it.
    * @param {Set<string>} allUsers - a list of all users found during the search.
    */
-  const matchUsername = allUsers => {
+  const matchUsername = (allUsers) => {
     if (allUsers.size === 0) return pageUser;
     for (const u of allUsers) {
       if (u.toLowerCase() === pageUser.toLowerCase()) return u;
@@ -40,7 +41,7 @@ function UserGraph(props: Props) {
    * new users, links, and transactions.
    * @param {Set<String>} toSearch - set of all users to search a single degree of.
    */
-  const searchDegree = async toSearch => {
+  const searchDegree = async (toSearch) => {
     const users = new Set();
     const links = [];
     const curTransactions = [];
@@ -48,7 +49,7 @@ function UserGraph(props: Props) {
     const searches = [];
     for (const user of toSearch) searches.push(getUserTransactions(user));
 
-    await Promise.all(searches).then(allData => {
+    await Promise.all(searches).then((allData) => {
       for (const data of allData) {
         for (const t of data) {
           users.add(t.sender);
@@ -89,7 +90,7 @@ function UserGraph(props: Props) {
     const baseDegree = userDegrees[username] ?? 0;
     for (let i = baseDegree; i < baseDegree + degree; i += 1) {
       if (i !== baseDegree) {
-        toSearch = new Set([...allUsers].filter(x => !searched.has(x)));
+        toSearch = new Set([...allUsers].filter((x) => !searched.has(x)));
         for (const u of toSearch) {
           if (!(u in userDegrees)) curUserDegrees[u] = i;
         }
@@ -103,7 +104,7 @@ function UserGraph(props: Props) {
       }
 
       // eslint-disable-next-line no-await-in-loop
-      await searchDegree(toSearch).then(data => {
+      await searchDegree(toSearch).then((data) => {
         allUsers = new Set([...allUsers, ...data[0]]);
 
         const users = [];
@@ -146,20 +147,18 @@ function UserGraph(props: Props) {
 
     if (users.length === 0 && !grow) {
       setUserGraph({ nodes: [{ name: username }], links: [] });
-    } else {
-      if (grow) {
-        const totalUsers = allUsers;
-        for (const x of userGraph.nodes) totalUsers.add(x.name);
-        const realTotalUsers = [];
-        for (const user of totalUsers) realTotalUsers.push({ name: user });
+    } else if (grow) {
+      const totalUsers = allUsers;
+      for (const x of userGraph.nodes) totalUsers.add(x.name);
+      const realTotalUsers = [];
+      for (const user of totalUsers) realTotalUsers.push({ name: user });
 
-        for (const x of userGraph.links) {
-          links.push({ from: x.from, to: x.to, name: x.name });
-        }
-        setUserGraph({ nodes: realTotalUsers, links });
-      } else {
-        setUserGraph({ nodes: users, links });
+      for (const x of userGraph.links) {
+        links.push({ from: x.from, to: x.to, name: x.name });
       }
+      setUserGraph({ nodes: realTotalUsers, links });
+    } else {
+      setUserGraph({ nodes: users, links });
     }
   };
 

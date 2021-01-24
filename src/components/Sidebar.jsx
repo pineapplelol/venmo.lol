@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Collapse, Layout, Input, List, notification } from 'antd';
 import { useHistory } from 'react-router-dom';
-
 import { getUserInformation } from '../util/api';
+
+import type { Node } from 'react';
 import type { Transaction } from '../types';
 import '../css/Sidebar.css';
 
@@ -20,7 +21,7 @@ type Props = {
   transactions: Array<Transaction>,
 };
 
-function Sidebar(props: Props) {
+function Sidebar(props: Props): Node {
   const { username, userDegrees, transactions } = props;
 
   const history = useHistory();
@@ -29,7 +30,7 @@ function Sidebar(props: Props) {
   const [userInfo, setUserInfo] = useState({});
   const portrait = window.innerHeight > window.innerWidth;
 
-  const directToUser = value => history.push(`/${value}`);
+  const directToUser = (value) => history.push(`/${value}`);
 
   useEffect(() => {
     const openNotification = () => {
@@ -40,7 +41,7 @@ function Sidebar(props: Props) {
     };
 
     const getUserInfo = async () => {
-      await getUserInformation(username).then(data => {
+      await getUserInformation(username).then((data) => {
         setUserInfo(data);
         if (data.isPrivate) openNotification();
       });
@@ -63,7 +64,7 @@ function Sidebar(props: Props) {
             <Search
               value={searchUser}
               onSearch={directToUser}
-              onChange={e => setSearchUser(e.target.value)}
+              onChange={(e) => setSearchUser(e.target.value)}
               enterButton
               width="80%"
             />
@@ -81,7 +82,7 @@ function Sidebar(props: Props) {
                 <Panel header="Users in Graph" key="users" extra={users.length}>
                   <List
                     dataSource={users}
-                    renderItem={user => (
+                    renderItem={(user) => (
                       <Button
                         className="user-list-card"
                         onClick={() => {
@@ -110,7 +111,7 @@ function Sidebar(props: Props) {
                 >
                   <List
                     dataSource={transactions}
-                    renderItem={t => (
+                    renderItem={(t) => (
                       <ListItem>
                         <ListItemMeta
                           title={
