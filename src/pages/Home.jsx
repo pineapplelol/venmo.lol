@@ -5,11 +5,13 @@ import { useHistory } from 'react-router-dom';
 
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
+
+import type { Node } from 'react';
 import '../css/Home.css';
 
 const { Search } = Input;
 
-function Home() {
+function Home(): Node {
   const history = useHistory();
 
   return (

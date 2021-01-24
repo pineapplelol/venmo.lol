@@ -3,6 +3,7 @@ import React, { useState, useLayoutEffect } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
 
+import type { Node } from 'react';
 import type { GraphData } from '../types';
 
 type Props = {
@@ -10,7 +11,7 @@ type Props = {
   addNode: (string) => void,
 };
 
-function Graph(props: Props) {
+function Graph(props: Props): Node {
   const { graph, addNode } = props;
 
   const [cursor, setCursor] = useState('default');

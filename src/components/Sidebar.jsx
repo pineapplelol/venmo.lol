@@ -2,8 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Collapse, Layout, Input, List, notification } from 'antd';
 import { useHistory } from 'react-router-dom';
-
 import { getUserInformation } from '../util/api';
+
+import type { Node } from 'react';
 import type { Transaction } from '../types';
 import '../css/Sidebar.css';
 
@@ -20,7 +21,7 @@ type Props = {
   transactions: Array<Transaction>,
 };
 
-function Sidebar(props: Props) {
+function Sidebar(props: Props): Node {
   const { username, userDegrees, transactions } = props;
 
   const history = useHistory();

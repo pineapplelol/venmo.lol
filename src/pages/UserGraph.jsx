@@ -5,6 +5,7 @@ import { Layout } from 'antd';
 import Graph from '../components/Graph';
 import Sidebar from '../components/Sidebar';
 import { getUserTransactions } from '../util/api';
+import type { Node } from 'react';
 import '../css/UserGraph.css';
 
 const { Content } = Layout;
@@ -13,7 +14,7 @@ type Props = {
   pageUser: string,
 };
 
-function UserGraph(props: Props) {
+function UserGraph(props: Props): Node {
   const { pageUser } = props;
 
   const [displayUsername, setDisplayUsername] = useState(pageUser);
