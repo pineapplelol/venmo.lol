@@ -9,8 +9,7 @@
     "plugin:flowtype/recommended",
     "plugin:import/errors",
     "plugin:import/warnings",
-    "prettier",
-    "prettier/react"
+    "prettier"
   ],
   "plugins": ["flowtype", "import", "prettier", "react", "react-hooks"],
   "rules": {
