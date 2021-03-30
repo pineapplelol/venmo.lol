@@ -1,12 +1,12 @@
 // @flow
 import React from 'react';
+import type { Node } from 'react';
 import { Input } from 'antd';
 import { useHistory } from 'react-router-dom';
 
 import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 
-import type { Node } from 'react';
 import '../css/Home.css';
 
 const { Search } = Input;

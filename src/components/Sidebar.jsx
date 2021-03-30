@@ -1,10 +1,10 @@
 // @flow
 import React, { useState, useEffect } from 'react';
+import type { Node } from 'react';
 import { Button, Collapse, Layout, Input, List, notification } from 'antd';
 import { useHistory } from 'react-router-dom';
-import { getUserInformation } from '../util/api';
 
-import type { Node } from 'react';
+import { getUserInformation } from '../util/api';
 import type { Transaction } from '../types';
 import '../css/Sidebar.css';
 
