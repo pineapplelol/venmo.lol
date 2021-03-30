@@ -1,11 +1,11 @@
 // @flow
 import React, { useState, useEffect } from 'react';
+import type { Node } from 'react';
 import { Layout } from 'antd';
 
 import Graph from '../components/Graph';
 import Sidebar from '../components/Sidebar';
 import { getUserTransactions } from '../util/api';
-import type { Node } from 'react';
 import '../css/UserGraph.css';
 
 const { Content } = Layout;
