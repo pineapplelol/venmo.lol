@@ -5,8 +5,6 @@ const instance = axios.create({
   baseURL: process.env.REACT_APP_VENMOLOL_API,
 });
 
-console.log(process.env.REACT_APP_VENMOLOL_API);
-
 export const getUserInformation = (username) =>
   instance.get(`/${username}`).then(
     (res) => res.data.info,
