@@ -17,7 +17,7 @@ const ListItemMeta = List.Item.Meta;
 
 type Props = {
   username: string,
-  userDegrees: {},
+  userDegrees: [],
   transactions: Array<Transaction>,
 };
 
@@ -25,7 +25,6 @@ function Sidebar(props: Props): Node {
   const { username, userDegrees, transactions } = props;
 
   const history = useHistory();
-  const users = Object.keys(userDegrees);
   const [searchUser, setSearchUser] = useState(username);
   const [userInfo, setUserInfo] = useState({});
   const portrait = window.innerHeight > window.innerWidth;
@@ -79,14 +78,18 @@ function Sidebar(props: Props): Node {
                     <img src={userInfo.img} alt="profile" />
                   </div>
                 </Panel>
-                <Panel header="Users in Graph" key="users" extra={users.length}>
+                <Panel
+                  header="Users in Graph"
+                  key="users"
+                  extra={userDegrees.length}
+                >
                   <List
-                    dataSource={users}
+                    dataSource={userDegrees}
                     renderItem={(user) => (
                       <Button
                         className="user-list-card"
                         onClick={() => {
-                          directToUser(user);
+                          directToUser(user[0]);
                         }}
                         block
                       >
@@ -94,8 +97,8 @@ function Sidebar(props: Props): Node {
                           <ListItemMeta
                             title={
                               <div className="user-list-row">
-                                {user}
-                                <div>Depth: {userDegrees[user]}</div>
+                                {user[0]}
+                                <div>Depth: {user[1]}</div>
                               </div>
                             }
                           />

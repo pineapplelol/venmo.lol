@@ -172,6 +172,12 @@ function UserGraph(props: Props): Node {
     generateUserGraph(username, true);
   };
 
+  const sortUserDegrees = (degrees) => {
+    const items = Object.keys(degrees).map((key) => [key, degrees[key]]);
+    items.sort((a, b) => a[1] - b[1]);
+    return items;
+  };
+
   useEffect(() => {
     generateUserGraph(pageUser);
   }, [pageUser]);
@@ -180,7 +186,7 @@ function UserGraph(props: Props): Node {
     <Layout>
       <Sidebar
         username={displayUsername}
-        userDegrees={userDegrees}
+        userDegrees={sortUserDegrees(userDegrees)}
         transactions={transactions}
       />
       <Content className="graph">
