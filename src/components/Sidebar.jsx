@@ -17,7 +17,7 @@ const ListItemMeta = List.Item.Meta;
 
 type Props = {
   username: string,
-  userDegrees: [],
+  userDegrees: Array<[string, number]>,
   transactions: Array<Transaction>,
 };
 

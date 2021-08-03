@@ -172,8 +172,18 @@ function UserGraph(props: Props): Node {
     generateUserGraph(username, true);
   };
 
-  const sortUserDegrees = (degrees) => {
-    const items = Object.keys(degrees).map((key) => [key, degrees[key]]);
+  /**
+   * Function to convert dictionary of users to degrees into a sorted array of tuples
+   * in the format [user, degree].
+   * @param {object} degrees - dictionary of users to degrees.
+   */
+  const sortUserDegrees = (degrees: {
+    string: number,
+  }): Array<[string, number]> => {
+    const items: Array<[string, number]> = Object.keys(degrees).map((key) => [
+      key,
+      degrees[key],
+    ]);
     items.sort((a, b) => a[1] - b[1]);
     return items;
   };
