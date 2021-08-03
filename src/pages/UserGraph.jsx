@@ -50,7 +50,8 @@ function UserGraph(props: Props): Node {
     for (const user of toSearch) searches.push(getUserTransactions(user));
 
     await Promise.all(searches).then((allData) => {
-      for (const data of allData) {
+      const transactionData = allData.filter((d) => d !== null);
+      for (const data of transactionData) {
         for (const t of data) {
           users.add(t.sender);
           users.add(t.recipient);
