@@ -80,6 +80,7 @@ function UserGraph(props: Props): Node {
     let allUsers = new Set();
     let searched = new Set();
     let toSearch = new Set([username]);
+    let realUsername = '';
     const curUserDegrees = grow ? userDegrees : {};
 
     const seenLinks = new Set();
@@ -99,7 +100,7 @@ function UserGraph(props: Props): Node {
       }
 
       if (!grow) {
-        const realUsername = matchUsername(allUsers);
+        realUsername = matchUsername(allUsers);
         if (realUsername && realUsername !== displayUsername)
           setDisplayUsername(realUsername);
       }
@@ -140,7 +141,7 @@ function UserGraph(props: Props): Node {
     for (const u of allUsers) {
       if (!(u in curUserDegrees)) curUserDegrees[u] = baseDegree + degree;
     }
-    curUserDegrees[username] = baseDegree;
+    curUserDegrees[realUsername] = baseDegree;
     setUserDegrees(curUserDegrees);
 
     const users = [];
@@ -178,7 +179,7 @@ function UserGraph(props: Props): Node {
   return (
     <Layout>
       <Sidebar
-        username={pageUser}
+        username={displayUsername}
         userDegrees={userDegrees}
         transactions={transactions}
       />
