@@ -15,9 +15,15 @@ const { Content, Sider, Footer } = Layout;
 const ListItem = List.Item;
 const ListItemMeta = List.Item.Meta;
 
+const defaultUserInfo = {
+  name: '',
+  venmoSince: '',
+  img: '',
+};
+
 type Props = {
   username: string,
-  userDegrees: {},
+  userDegrees: Array<[string, number]>,
   transactions: Array<Transaction>,
 };
 
@@ -25,25 +31,43 @@ function Sidebar(props: Props): Node {
   const { username, userDegrees, transactions } = props;
 
   const history = useHistory();
-  const users = Object.keys(userDegrees);
   const [searchUser, setSearchUser] = useState(username);
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState(defaultUserInfo);
+  const [userExists, setUserExists] = useState(true);
   const portrait = window.innerHeight > window.innerWidth;
 
   const directToUser = (value) => history.push(`/${value}`);
 
   useEffect(() => {
-    const openNotification = () => {
+    const openPrivateNotification = () => {
       notification.warning({
         message: `${username} is private!`,
         description: 'User payment network is not available.',
+        duration: 0,
+      });
+    };
+
+    const openUserExistNotification = () => {
+      notification.error({
+        message: `${username} doesn't exist!`,
+        description: 'User payment network is not available.',
+        duration: 0,
       });
     };
 
     const getUserInfo = async () => {
       await getUserInformation(username).then((data) => {
-        setUserInfo(data);
-        if (data.isPrivate) openNotification();
+        if (!data) {
+          notification.destroy();
+          setUserExists(false);
+          setUserInfo(defaultUserInfo);
+          openUserExistNotification();
+        } else {
+          notification.destroy();
+          setUserExists(true);
+          setUserInfo(data);
+          if (data.isPrivate) openPrivateNotification();
+        }
       });
     };
 
@@ -69,7 +93,7 @@ function Sidebar(props: Props): Node {
               width="80%"
             />
             <div className="sidebar-information">
-              <Collapse accordion>
+              <Collapse accordion collapsible={!userExists && 'disabled'}>
                 <Panel header="User Information" key="user-info">
                   <div className="user-info">
                     <div className="user-info-text">
@@ -79,14 +103,18 @@ function Sidebar(props: Props): Node {
                     <img src={userInfo.img} alt="profile" />
                   </div>
                 </Panel>
-                <Panel header="Users in Graph" key="users" extra={users.length}>
+                <Panel
+                  header="Users in Graph"
+                  key="users"
+                  extra={userDegrees.length}
+                >
                   <List
-                    dataSource={users}
+                    dataSource={userDegrees}
                     renderItem={(user) => (
                       <Button
                         className="user-list-card"
                         onClick={() => {
-                          directToUser(user);
+                          directToUser(user[0]);
                         }}
                         block
                       >
@@ -94,8 +122,8 @@ function Sidebar(props: Props): Node {
                           <ListItemMeta
                             title={
                               <div className="user-list-row">
-                                {user}
-                                <div>Depth: {userDegrees[user]}</div>
+                                {user[0]}
+                                <div>Depth: {user[1]}</div>
                               </div>
                             }
                           />

@@ -8,17 +8,11 @@ const instance = axios.create({
 export const getUserInformation = (username) =>
   instance.get(`/${username}`).then(
     (res) => res.data.info,
-    (err) => {
-      console.error(err);
-      return null;
-    },
+    () => null,
   );
 
 export const getUserTransactions = (username) =>
   instance.get(`/${username}`).then(
     (res) => res.data.transactions,
-    (err) => {
-      console.error(err);
-      return null;
-    },
+    () => null,
   );
