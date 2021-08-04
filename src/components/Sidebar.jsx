@@ -52,10 +52,12 @@ function Sidebar(props: Props): Node {
     const getUserInfo = async () => {
       await getUserInformation(username).then((data) => {
         if (!data) {
+          notification.destroy();
           setUserExists(false);
           setUserInfo({ name: '' });
           openUserExistNotification();
         } else {
+          notification.destroy();
           setUserExists(true);
           setUserInfo(data);
           if (data.isPrivate) openPrivateNotification();
