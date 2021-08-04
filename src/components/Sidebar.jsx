@@ -15,6 +15,12 @@ const { Content, Sider, Footer } = Layout;
 const ListItem = List.Item;
 const ListItemMeta = List.Item.Meta;
 
+const defaultUserInfo = {
+  name: '',
+  venmoSince: '',
+  img: '',
+};
+
 type Props = {
   username: string,
   userDegrees: Array<[string, number]>,
@@ -26,7 +32,7 @@ function Sidebar(props: Props): Node {
 
   const history = useHistory();
   const [searchUser, setSearchUser] = useState(username);
-  const [userInfo, setUserInfo] = useState({ name: '' });
+  const [userInfo, setUserInfo] = useState(defaultUserInfo);
   const [userExists, setUserExists] = useState(true);
   const portrait = window.innerHeight > window.innerWidth;
 
@@ -54,7 +60,7 @@ function Sidebar(props: Props): Node {
         if (!data) {
           notification.destroy();
           setUserExists(false);
-          setUserInfo({ name: '' });
+          setUserInfo(defaultUserInfo);
           openUserExistNotification();
         } else {
           notification.destroy();
