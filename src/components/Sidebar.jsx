@@ -97,10 +97,10 @@ function Sidebar(props: Props): Node {
                 <Panel header="User Information" key="user-info">
                   <div className="user-info">
                     <div className="user-info-text">
-                      <h1>{userInfo && userInfo.name}</h1>
-                      <p>{userInfo && userInfo.venmoSince}</p>
+                      <h1>{userInfo.name}</h1>
+                      <p>{userInfo.venmoSince}</p>
                     </div>
-                    <img src={userInfo && userInfo.img} alt="profile" />
+                    <img src={userInfo.img} alt="profile" />
                   </div>
                 </Panel>
                 <Panel
