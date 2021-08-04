@@ -26,23 +26,40 @@ function Sidebar(props: Props): Node {
 
   const history = useHistory();
   const [searchUser, setSearchUser] = useState(username);
-  const [userInfo, setUserInfo] = useState({});
+  const [userInfo, setUserInfo] = useState({ name: '' });
+  const [userExists, setUserExists] = useState(true);
   const portrait = window.innerHeight > window.innerWidth;
 
   const directToUser = (value) => history.push(`/${value}`);
 
   useEffect(() => {
-    const openNotification = () => {
+    const openPrivateNotification = () => {
       notification.warning({
         message: `${username} is private!`,
         description: 'User payment network is not available.',
+        duration: 0,
+      });
+    };
+
+    const openUserExistNotification = () => {
+      notification.error({
+        message: `${username} doesn't exist!`,
+        description: 'User payment network is not available.',
+        duration: 0,
       });
     };
 
     const getUserInfo = async () => {
       await getUserInformation(username).then((data) => {
-        setUserInfo(data);
-        if (data.isPrivate) openNotification();
+        if (!data) {
+          setUserExists(false);
+          setUserInfo({ name: '' });
+          openUserExistNotification();
+        } else {
+          setUserExists(true);
+          setUserInfo(data);
+          if (data.isPrivate) openPrivateNotification();
+        }
       });
     };
 
@@ -68,14 +85,14 @@ function Sidebar(props: Props): Node {
               width="80%"
             />
             <div className="sidebar-information">
-              <Collapse accordion>
+              <Collapse accordion collapsible={!userExists && 'disabled'}>
                 <Panel header="User Information" key="user-info">
                   <div className="user-info">
                     <div className="user-info-text">
-                      <h1>{userInfo.name}</h1>
-                      <p>{userInfo.venmoSince}</p>
+                      <h1>{userInfo && userInfo.name}</h1>
+                      <p>{userInfo && userInfo.venmoSince}</p>
                     </div>
-                    <img src={userInfo.img} alt="profile" />
+                    <img src={userInfo && userInfo.img} alt="profile" />
                   </div>
                 </Panel>
                 <Panel
