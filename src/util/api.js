@@ -2,7 +2,7 @@
 const axios = require('axios');
 
 const instance = axios.create({
-  baseURL: 'https://venmolol-api-9l8xm07lr-n3a9.vercel.app/',
+  baseURL: process.env.REACT_APP_VENMOLOL_API,
 });
 
 export const getUserInformation = (username) =>
