@@ -47,21 +47,22 @@ function UserGraph(props: Props): Node {
     const curTransactions = [];
 
     const searches = [];
-    for (const user of toSearch) searches.push(getUserTransactions(user));
+    for (const user of toSearch) {
+      searches.push(getUserTransactions(user));
+    }
 
     await Promise.all(searches).then((allData) => {
-      const transactionData = allData.filter((d) => d !== null);
-      for (const data of transactionData) {
-        for (const t of data) {
-          users.add(t.sender);
-          users.add(t.recipient);
-          links.push({
-            from: t.sender,
-            to: t.recipient,
-            name: `${t.sender} to ${t.recipient}: ${t.message}`,
-          });
-          curTransactions.push(t);
-        }
+      console.log(allData);
+      const transactionData = allData[0].filter((d) => d !== null);
+      for (const t of transactionData) {
+        users.add(t.actor.username);
+        users.add(t.target.username);
+        links.push({
+          from: t.actor.username,
+          to: t.target.username,
+          name: `${t.actor.username} to ${t.target.username}: ${t.note}`,
+        });
+        curTransactions.push(t);
       }
     });
 
@@ -99,11 +100,11 @@ function UserGraph(props: Props): Node {
         setUserDegrees(curUserDegrees);
       }
 
-      if (!grow) {
-        realUsername = matchUsername(allUsers);
-        if (realUsername && realUsername !== displayUsername)
-          setDisplayUsername(realUsername);
-      }
+      // if (!grow) {
+      //   realUsername = matchUsername(allUsers);
+      //   if (realUsername && realUsername !== displayUsername)
+      //     setDisplayUsername(realUsername);
+      // }
 
       // eslint-disable-next-line no-await-in-loop
       await searchDegree(toSearch).then((data) => {
@@ -126,7 +127,7 @@ function UserGraph(props: Props): Node {
         }
 
         for (const t of data[2]) {
-          const k = `${t.sender}${t.date}`;
+          const k = `${t.actor.username}${t.date}`;
           if (!seenTransactions.has(k)) {
             seenTransactions.add(k);
             curTransactions.push(t);
