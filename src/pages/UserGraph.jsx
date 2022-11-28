@@ -8,6 +8,8 @@ import Sidebar from '../components/Sidebar';
 import { getUserTransactions } from '../util/api';
 import '../css/UserGraph.css';
 
+import type { Transaction, StringDict, GraphLink } from '../types';
+
 const { Content } = Layout;
 
 type Props = {
@@ -40,32 +42,42 @@ function UserGraph(props: Props): Node {
    * Will search a single degree of all the users in toSearch. Will return all
    * new users, links, and transactions.
    * @param {Set<String>} toSearch - set of all users to search a single degree of.
+   * @return A list of users, links, and transactions.
    */
-  const searchDegree = async (toSearch) => {
-    const users = new Set();
+  const searchDegree = async (
+    toSearch: Set<string>,
+    maxTransactions: number = 10,
+  ): Promise<[StringDict, Array<GraphLink>, Array<Transaction>]> => {
+    // Users is a dictionary of all users found during the search. The key is the username,
+    // and the value is the user's display name.
+    const users = {};
     const links = [];
-    const curTransactions = [];
+    const transactions = [];
 
     const searches = [];
     for (const user of toSearch) searches.push(getUserTransactions(user));
 
-    await Promise.all(searches).then((allData) => {
-      const transactionData = allData.filter((d) => d !== null);
-      for (const data of transactionData) {
-        for (const t of data) {
-          users.add(t.sender);
-          users.add(t.recipient);
-          links.push({
-            from: t.sender,
-            to: t.recipient,
-            name: `${t.sender} to ${t.recipient}: ${t.message}`,
-          });
-          curTransactions.push(t);
+    return Promise.all(searches)
+      .then((userTransactionData) => {
+        userTransactionData = userTransactionData.filter((d) => d !== null);
+        for (let userTransactions of userTransactionData) {
+          if (!userTransactions || !Array.isArray(userTransactions)) continue;
+          userTransactions = userTransactions.slice(0, maxTransactions);
+          for (const t of userTransactions) {
+            users[t.actor.username] = t.actor.name;
+            users[t.target.username] = t.target.name;
+            links.push({
+              from: t.actor.name,
+              to: t.target.name,
+              name: `${t.actor.name} ${t.action} ${t.target.name}: ${t.note}`,
+            });
+            transactions.push(t);
+          }
         }
-      }
-    });
-
-    return [users, links, curTransactions];
+      })
+      .then(() => {
+        return [users, links, transactions];
+      });
   };
 
   /**
@@ -76,57 +88,79 @@ function UserGraph(props: Props): Node {
    *                       the user degrees.
    * @param {number} degree - the degree to search to for the username.
    */
-  const generateUserGraph = async (username, grow = false, degree = 3) => {
-    let allUsers = new Set();
+  const generateUserGraph = async (
+    username: string,
+    grow: boolean = false,
+    degree: number = 3,
+  ) => {
+    // const generateUserGraph = async (username, grow = false, degree = 1) => {
+    // allUsers is a dictionary of all users found the graph creation. The key is the username,
+    // and the value is the user's display name.
+    const allUsers = {};
+    // searched is a set of all usernames that have been searched.
     let searched = new Set();
+    // toSearch is a set of all usernames that need to be searched.
     let toSearch = new Set([username]);
     let realUsername = '';
-    const curUserDegrees = grow ? userDegrees : {};
+    const curUserDegrees: { [username: string]: number } = grow
+      ? userDegrees
+      : { [username]: 0 };
 
     const seenLinks = new Set();
-    const links = [];
+    const graphLinks = [];
 
     const seenTransactions = new Set();
     const curTransactions = [];
 
-    const baseDegree = userDegrees[username] ?? 0;
-    for (let i = baseDegree; i < baseDegree + degree; i += 1) {
+    const baseDegree = curUserDegrees[username] || 0;
+    for (let i = baseDegree; i < degree; i += 1) {
       if (i !== baseDegree) {
-        toSearch = new Set([...allUsers].filter((x) => !searched.has(x)));
+        const allUsernames = Object.keys(allUsers);
+        toSearch = new Set(
+          allUsernames.filter((x) => !searched.has(x) && x !== 'null'),
+        );
         for (const u of toSearch) {
           if (!(u in userDegrees)) curUserDegrees[u] = i;
         }
         setUserDegrees(curUserDegrees);
       }
 
-      if (!grow) {
-        realUsername = matchUsername(allUsers);
-        if (realUsername && realUsername !== displayUsername)
-          setDisplayUsername(realUsername);
-      }
+      // if (!grow) {
+      //   realUsername = matchUsername(allUsers);
+      //   if (realUsername && realUsername !== displayUsername)
+      //     setDisplayUsername(realUsername);
+      // }
 
       // eslint-disable-next-line no-await-in-loop
       await searchDegree(toSearch).then((data) => {
-        allUsers = new Set([...allUsers, ...data[0]]);
+        const [users, links, transactions] = data;
 
-        const users = [];
-        for (const user of allUsers) users.push({ name: user });
+        // Add all new users from the search to allUsers.
+        for (const username of Object.keys(users)) {
+          if (!(username in allUsers)) allUsers[username] = users[username];
+        }
 
-        for (const l of data[1]) {
+        // Generate graph nodes by using the display names of allUsers.
+        const graphUsers = Object.keys(allUsers).map((user) => {
+          return { name: allUsers[user] };
+        });
+
+        for (const l of links) {
           const k = `${l.to}${l.from}`;
           if (!seenLinks.has(k)) {
             seenLinks.add(k);
-            links.push(l);
+            graphLinks.push(l);
           }
         }
+
         if (!grow) {
-          setUserGraph({ nodes: users, links: [] });
+          setUserGraph({ nodes: graphUsers, links: [] });
           // https://github.com/vasturiano/react-force-graph/issues/238
-          // setUserGraph({ nodes: users, links: [...links] });
+          // setUserGraph({ nodes: graphUsers, links: graphLinks });
         }
 
         for (const t of data[2]) {
-          const k = `${t.sender}${t.date}`;
+          const k = `${t.actor.username}${t.date}`;
           if (!seenTransactions.has(k)) {
             seenTransactions.add(k);
             curTransactions.push(t);
@@ -138,29 +172,35 @@ function UserGraph(props: Props): Node {
       searched = new Set([...searched, ...toSearch]);
     }
 
-    for (const u of allUsers) {
+    // get allusers keys
+    const allUsersKeys = Object.keys(allUsers);
+    for (const u of allUsersKeys) {
       if (!(u in curUserDegrees)) curUserDegrees[u] = baseDegree + degree;
     }
-    curUserDegrees[realUsername] = baseDegree;
+
+    // curUserDegrees[realUsername] = baseDegree;
     setUserDegrees(curUserDegrees);
 
-    const users = [];
-    for (const user of allUsers) users.push({ name: user });
+    const users = Object.keys(allUsers).map((user) => {
+      return { name: allUsers[user] };
+    });
 
     if (users.length === 0 && !grow) {
-      setUserGraph({ nodes: [{ name: username }], links: [] });
+      const usernameNodes: { [username: string]: string } = { name: username };
+      setUserGraph({ nodes: [usernameNodes], links: [] });
+      // setUserGraph({ nodes: [{ name: username }], links: [] });
     } else if (grow) {
-      const totalUsers = allUsers;
-      for (const x of userGraph.nodes) totalUsers.add(x.name);
-      const realTotalUsers = [];
-      for (const user of totalUsers) realTotalUsers.push({ name: user });
+      // const totalUsers = allUsers;
+      // for (const x of userGraph.nodes) totalUsers.add(x.name);
+      // const realTotalUsers = [];
+      // for (const user of totalUsers) realTotalUsers.push({ name: user });
 
-      for (const x of userGraph.links) {
-        links.push({ from: x.from, to: x.to, name: x.name });
-      }
-      setUserGraph({ nodes: realTotalUsers, links });
+      // for (const x of userGraph.links) {
+      //   links.push({ from: x.from, to: x.to, name: x.name });
+      // }
+      setUserGraph({ nodes: users, links: graphLinks });
     } else {
-      setUserGraph({ nodes: users, links });
+      setUserGraph({ nodes: users, links: graphLinks });
     }
   };
 
@@ -177,13 +217,12 @@ function UserGraph(props: Props): Node {
    * in the format [user, degree].
    * @param {object} degrees - dictionary of users to degrees.
    */
-  const sortUserDegrees = (degrees: {
+  const sortUserDegrees = (userDegrees: {
     string: number,
   }): Array<[string, number]> => {
-    const items: Array<[string, number]> = Object.keys(degrees).map((key) => [
-      key,
-      degrees[key],
-    ]);
+    const items: Array<[string, number]> = Object.keys(userDegrees).map(
+      (key) => [key, userDegrees[key]],
+    );
     items.sort((a, b) => a[1] - b[1]);
     return items;
   };

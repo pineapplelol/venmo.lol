@@ -7,7 +7,7 @@ const instance = axios.create({
 
 export const getUserInformation = (username) =>
   instance.get(`/${username}`).then(
-    (res) => res.data.info,
+    (res) => res.data.user,
     () => null,
   );
 

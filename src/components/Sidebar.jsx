@@ -16,9 +16,10 @@ const ListItem = List.Item;
 const ListItemMeta = List.Item.Meta;
 
 const defaultUserInfo = {
+  username: '',
   name: '',
-  venmoSince: '',
-  img: '',
+  dateJoined: '',
+  profilePictureURL: '',
 };
 
 type Props = {
@@ -98,9 +99,9 @@ function Sidebar(props: Props): Node {
                   <div className="user-info">
                     <div className="user-info-text">
                       <h1>{userInfo.name}</h1>
-                      <p>{userInfo.venmoSince}</p>
+                      <p>Joined Venmo in {userInfo.dateJoined}</p>
                     </div>
-                    <img src={userInfo.img} alt="profile" />
+                    <img src={userInfo.profilePictureURL} alt="profile" />
                   </div>
                 </Panel>
                 <Panel
@@ -144,15 +145,13 @@ function Sidebar(props: Props): Node {
                         <ListItemMeta
                           title={
                             <div className="user-list-row">
-                              {t.transactionType === 'charged'
-                                ? `${t.recipient} charged ${t.sender}`
-                                : `${t.sender} paid ${t.recipient}`}
+                              {`${t.actor.name} ${t.action} ${t.target.name}`}
                               <div className="user-list-row-description">
                                 {t.date}
                               </div>
                             </div>
                           }
-                          description={t.message}
+                          description={t.note}
                         />
                       </ListItem>
                     )}
