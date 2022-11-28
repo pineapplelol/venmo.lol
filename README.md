@@ -47,13 +47,11 @@ The project requires an API to return public user information and transactions. 
 
 Built with [React](https://reactjs.org/) using [Ant Design](https://ant.design/) components.
 
-Uses [ESLint](https://eslint.org) with [Prettier](https://prettier.io/) and the [Airbnb Javascript Style Guide](https://github.com/airbnb/javascript).
-
-Uses [Flow](https://flow.org/) type checking.
+Uses [ESLint](https://eslint.org) with [Prettier](https://prettier.io/) and the [Airbnb Javascript Style Guide](https://github.com/airbnb/javascript) with [Flow](https://flow.org/) for type checking.
 
 ### Code Quality
 
-To lint, `npm lint`, `npm format` for code formatting, and for flow type checking, `yarn run flow`.
+To lint, `npm run lint`, `npm run format` for code formatting, and for type checking, `npm run flow`.
 
 ## Partners
 

@@ -12,3 +12,6 @@ untyped-import=off
 include_warnings=true
 
 [strict]
+
+[declarations]
+.*/node_modules/**/.*

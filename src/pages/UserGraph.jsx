@@ -8,6 +8,8 @@ import Sidebar from '../components/Sidebar';
 import { getUserTransactions } from '../util/api';
 import '../css/UserGraph.css';
 
+import type { Transaction, StringDict, GraphLink } from '../types';
+
 const { Content } = Layout;
 
 type Props = {
@@ -42,7 +44,10 @@ function UserGraph(props: Props): Node {
    * @param {Set<String>} toSearch - set of all users to search a single degree of.
    * @return A list of users, links, and transactions.
    */
-  const searchDegree = async (toSearch, maxTransactions = 10) => {
+  const searchDegree = async (
+    toSearch: Set<string>,
+    maxTransactions: number = 10,
+  ): Promise<[StringDict, Array<GraphLink>, Array<Transaction>]> => {
     // Users is a dictionary of all users found during the search. The key is the username,
     // and the value is the user's display name.
     const users = {};
@@ -83,7 +88,11 @@ function UserGraph(props: Props): Node {
    *                       the user degrees.
    * @param {number} degree - the degree to search to for the username.
    */
-  const generateUserGraph = async (username, grow = false, degree = 3) => {
+  const generateUserGraph = async (
+    username: string,
+    grow: boolean = false,
+    degree: number = 3,
+  ) => {
     // const generateUserGraph = async (username, grow = false, degree = 1) => {
     // allUsers is a dictionary of all users found the graph creation. The key is the username,
     // and the value is the user's display name.
@@ -93,7 +102,9 @@ function UserGraph(props: Props): Node {
     // toSearch is a set of all usernames that need to be searched.
     let toSearch = new Set([username]);
     let realUsername = '';
-    const curUserDegrees = grow ? userDegrees : { [username]: 0 };
+    const curUserDegrees: { [username: string]: number } = grow
+      ? userDegrees
+      : { [username]: 0 };
 
     const seenLinks = new Set();
     const graphLinks = [];
@@ -122,19 +133,17 @@ function UserGraph(props: Props): Node {
 
       // eslint-disable-next-line no-await-in-loop
       await searchDegree(toSearch).then((data) => {
-        let users, links, transactions;
-        [users, links, transactions] = data;
+        const [users, links, transactions] = data;
 
         // Add all new users from the search to allUsers.
-        for (const [username, displayName] of Object.entries(users)) {
-          if (!(username in allUsers)) allUsers[username] = displayName;
+        for (const username of Object.keys(users)) {
+          if (!(username in allUsers)) allUsers[username] = users[username];
         }
 
         // Generate graph nodes by using the display names of allUsers.
-        const graphUsers = [];
-        for (const u of Object.values(allUsers)) {
-          graphUsers.push({ name: u });
-        }
+        const graphUsers = Object.keys(allUsers).map((user) => {
+          return { name: allUsers[user] };
+        });
 
         for (const l of links) {
           const k = `${l.to}${l.from}`;
@@ -172,11 +181,14 @@ function UserGraph(props: Props): Node {
     // curUserDegrees[realUsername] = baseDegree;
     setUserDegrees(curUserDegrees);
 
-    const users = [];
-    for (const user of Object.values(allUsers)) users.push({ name: user });
+    const users = Object.keys(allUsers).map((user) => {
+      return { name: allUsers[user] };
+    });
 
     if (users.length === 0 && !grow) {
-      setUserGraph({ nodes: [{ name: username }], links: [] });
+      const usernameNodes: { [username: string]: string } = { name: username };
+      setUserGraph({ nodes: [usernameNodes], links: [] });
+      // setUserGraph({ nodes: [{ name: username }], links: [] });
     } else if (grow) {
       // const totalUsers = allUsers;
       // for (const x of userGraph.nodes) totalUsers.add(x.name);

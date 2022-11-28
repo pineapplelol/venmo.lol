@@ -16,9 +16,10 @@ const ListItem = List.Item;
 const ListItemMeta = List.Item.Meta;
 
 const defaultUserInfo = {
+  username: '',
   name: '',
-  venmoSince: '',
-  img: '',
+  dateJoined: '',
+  profilePictureURL: '',
 };
 
 type Props = {
