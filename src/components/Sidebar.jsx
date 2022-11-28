@@ -144,15 +144,13 @@ function Sidebar(props: Props): Node {
                         <ListItemMeta
                           title={
                             <div className="user-list-row">
-                              {t.transactionType === 'charged'
-                                ? `${t.recipient} charged ${t.sender}`
-                                : `${t.sender} paid ${t.recipient}`}
+                              {`${t.actor.name} ${t.action} ${t.target.name}`}
                               <div className="user-list-row-description">
                                 {t.date}
                               </div>
                             </div>
                           }
-                          description={t.message}
+                          description={t.note}
                         />
                       </ListItem>
                     )}

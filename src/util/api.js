@@ -14,8 +14,6 @@ export const getUserInformation = (username) =>
 
 export const getUserTransactions = (username) =>
   instance.get(`/${username}`).then(
-    (res) => {
-      return res.data.transactions;
-    },
+    (res) => res.data.transactions,
     () => null,
   );
