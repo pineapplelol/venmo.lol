@@ -42,7 +42,6 @@ function Graph(props: Props): Node {
         backgroundColor="#000000"
         enableNodeDrag={false}
         nodeAutoColorBy="name"
-        linkAutoColorBy="from"
         linkWidth={1.5}
         linkDirectionalParticles={4}
         linkDirectionalParticleWidth={1}
@@ -56,7 +55,7 @@ function Graph(props: Props): Node {
         nodeThreeObjectExtend
         nodeRelSize={3}
         onNodeClick={(value) => {
-          addNode(value.name);
+          addNode(value.username);
         }}
         nodeLabel=""
         onNodeHover={(node) =>

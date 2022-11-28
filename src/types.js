@@ -2,10 +2,17 @@
 
 export type StringDict = { [string]: string };
 
-export type GraphLink = { to: string, from: string, name: string };
+export type GraphNode = { name: string, username: string };
+export type GraphLink = {
+  to: string,
+  from: string,
+  name: string,
+  id: string,
+  degree: number,
+};
 
 export type GraphData = {
-  nodes: Array<{ name: string }>,
+  nodes: Array<GraphData>,
   links: Array<GraphLink>,
 };
 
