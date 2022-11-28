@@ -116,6 +116,11 @@ function UserGraph(props: Props): Node {
         for (const u of Object.keys(users)) {
           if (!(u in allUsers)) allUsers[u] = users[u];
         }
+        // Add degrees of new users to curUserDegrees
+        for (const u of Object.keys(allUsers)) {
+          if (!(u in curUserDegrees)) curUserDegrees[u] = i + 1;
+        }
+        setUserDegrees(curUserDegrees);
 
         // Generate graph nodes by using the display names of allUsers.
         const graphUsers = Object.keys(allUsers).map((user) => ({
@@ -150,15 +155,6 @@ function UserGraph(props: Props): Node {
 
       searched = new Set([...searched, ...toSearch]);
     }
-
-    // get allusers keys
-    const allUsersKeys = Object.keys(allUsers);
-    for (const u of allUsersKeys) {
-      if (!(u in curUserDegrees)) curUserDegrees[u] = baseDegree + degree;
-    }
-
-    // curUserDegrees[realUsername] = baseDegree;
-    setUserDegrees(curUserDegrees);
 
     const users = Object.keys(allUsers).map((user) => ({
       name: allUsers[user],
