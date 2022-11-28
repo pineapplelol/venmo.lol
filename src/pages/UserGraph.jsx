@@ -42,7 +42,7 @@ function UserGraph(props: Props): Node {
    * @param {Set<String>} toSearch - set of all users to search a single degree of.
    * @return A list of users, links, and transactions.
    */
-  const searchDegree = async (toSearch, maxTransactions = 5) => {
+  const searchDegree = async (toSearch, maxTransactions = 10) => {
     // Users is a dictionary of all users found during the search. The key is the username,
     // and the value is the user's display name.
     const users = {};
@@ -56,8 +56,7 @@ function UserGraph(props: Props): Node {
       .then((userTransactionData) => {
         userTransactionData = userTransactionData.filter((d) => d !== null);
         for (let userTransactions of userTransactionData) {
-          if (!userTransactions) continue;
-          console.log(userTransactions);
+          if (!userTransactions || !Array.isArray(userTransactions)) continue;
           userTransactions = userTransactions.slice(0, maxTransactions);
           for (const t of userTransactions) {
             users[t.actor.username] = t.actor.name;
@@ -72,7 +71,6 @@ function UserGraph(props: Props): Node {
         }
       })
       .then(() => {
-        console.log(users);
         return [users, links, transactions];
       });
   };
@@ -123,7 +121,6 @@ function UserGraph(props: Props): Node {
       // }
 
       // eslint-disable-next-line no-await-in-loop
-
       await searchDegree(toSearch).then((data) => {
         let users, links, transactions;
         [users, links, transactions] = data;
@@ -208,13 +205,12 @@ function UserGraph(props: Props): Node {
    * in the format [user, degree].
    * @param {object} degrees - dictionary of users to degrees.
    */
-  const sortUserDegrees = (degrees: {
+  const sortUserDegrees = (userDegrees: {
     string: number,
   }): Array<[string, number]> => {
-    const items: Array<[string, number]> = Object.keys(degrees).map((key) => [
-      key,
-      degrees[key],
-    ]);
+    const items: Array<[string, number]> = Object.keys(userDegrees).map(
+      (key) => [key, userDegrees[key]],
+    );
     items.sort((a, b) => a[1] - b[1]);
     return items;
   };

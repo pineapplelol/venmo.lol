@@ -98,9 +98,9 @@ function Sidebar(props: Props): Node {
                   <div className="user-info">
                     <div className="user-info-text">
                       <h1>{userInfo.name}</h1>
-                      <p>{userInfo.venmoSince}</p>
+                      <p>Joined Venmo in {userInfo.dateJoined}</p>
                     </div>
-                    <img src={userInfo.img} alt="profile" />
+                    <img src={userInfo.profilePictureURL} alt="profile" />
                   </div>
                 </Panel>
                 <Panel
