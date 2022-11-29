@@ -6,7 +6,7 @@ import { Layout } from 'antd';
 import Graph from '../components/Graph';
 import Sidebar from '../components/Sidebar';
 import { getUserTransactions } from '../util/api';
-import type { Transaction, StringDict, GraphLink } from '../types';
+import type { Transaction, StringDict, GraphLink, GraphNode } from '../types';
 import '../css/UserGraph.css';
 
 const { Content } = Layout;
@@ -23,6 +23,47 @@ function UserGraph(props: Props): Node {
   const [userDegrees, setUserDegrees] = useState({});
   const [transactions, setTransactions] = useState([]);
   const [linkId, setLinkId] = useState(0);
+
+  /**
+   * Generate graph nodes.
+   * @param {Array<StringDict>} users a dictionary of users, where the key is the
+   *                            username and the value is the display name.
+   * @param {Array<{string: number}}} degrees a dictionary of user degrees, where
+   *                                  the key is the username and the value is the degree.
+   * @returns
+   */
+  const generateGraphNodes = (
+    users: Array<StringDict>,
+    degrees,
+  ): Array<GraphNode> => {
+    return Object.keys(users).map((user) => ({
+      name: users[user],
+      username: user,
+      degree: degrees[user],
+    }));
+  };
+
+  /**
+   * Generate graph links.
+   *
+   * There is a current bug in the graph library – when the graph is updated, links that previously exist do not
+   * change position to account for the new graph, and thus are detached. To get around the issue of the graph not
+   * updating when links previously exist, we generate 'new links' by changing link id forcing a re-render.
+   * Reference: https://github.com/vasturiano/react-force-graph/issues/238
+   * @param {Array<GraphLink>} links the links to generate new links for
+   * @returns {Array<GraphLink>} the generated links for the graph
+   */
+  const generateGraphLinks = (links: Array<GraphLink>): Array<GraphLink> => {
+    const newLinks = [];
+    links.forEach((link) => {
+      newLinks.push({
+        ...link,
+        id: linkId,
+      });
+      setLinkId(linkId + 1);
+    });
+    return newLinks;
+  };
 
   /**
    * Will search a single degree of all the users in usersToSearch. Will return all
@@ -70,7 +111,7 @@ function UserGraph(props: Props): Node {
    * of 2 for a given user.
    * @param {string} username - the user to for which the graph will be generated.
    * @param {boolean} grow - if there is an existing graph to add to. Will not change
-   *                       the user degrees.
+   *                         the user degrees.
    * @param {number} degree - the degree to search to for the username.
    */
   const generateUserGraph = async (
@@ -78,23 +119,20 @@ function UserGraph(props: Props): Node {
     grow: boolean = false,
     degree: number = 2,
   ) => {
-    // foundUsers is a dictionary of all users found during the graph creation. The key is the username,
-    // and the value is the user's display name.
     const foundUsers = {};
     let searchedUsers = new Set();
     let usersToSearch = new Set();
-    const curUserDegrees: { [username: string]: number } = grow
+    const foundUserDegrees: { [username: string]: number } = grow
       ? userDegrees
       : { [username]: 0 };
 
     const seenLinks = new Set();
-    const graphLinks = [];
+    const foundLinks = [];
     const seenTransactions = new Set();
-    const curTransactions = [];
+    const foundTransactions = [];
 
-    const baseDegree = curUserDegrees[username];
+    const baseDegree = foundUserDegrees[username];
     for (let i = baseDegree; i < baseDegree + degree; i += 1) {
-      // Generate set of users to search
       usersToSearch =
         i !== baseDegree
           ? new Set(
@@ -106,90 +144,59 @@ function UserGraph(props: Props): Node {
 
       // eslint-disable-next-line no-await-in-loop
       await searchDegree(usersToSearch).then((data) => {
-        const [users, links, degreeTransactions] = data;
+        const [degreeUsers, degreeLinks, degreeTransactions] = data;
 
-        // Add all new users from the search to foundUsers.
-        for (const u of Object.keys(users)) {
-          if (!(u in foundUsers)) foundUsers[u] = users[u];
-        }
-        // Add degrees of new users to curUserDegrees
-        for (const u of Object.keys(foundUsers)) {
-          if (!(u in curUserDegrees)) curUserDegrees[u] = i + 1;
-        }
-        setUserDegrees(curUserDegrees);
-
-        // Generate graph nodes by using the display names of foundUsers.
-        const graphNodes = Object.keys(foundUsers).map((user) => ({
-          name: foundUsers[user],
-          username: user,
-          degree: curUserDegrees[user],
-        }));
-
-        // Display only one transaction between two people in the graph.
-        for (const l of links) {
-          const k = `${l.to}${l.from}`;
-          if (!seenLinks.has(k)) {
-            seenLinks.add(k);
-            graphLinks.push(l);
-          }
+        // Process all users found in the degree – add to found users and update user degrees.
+        for (const u of Object.keys(degreeUsers)) {
+          if (!(u in foundUsers)) foundUsers[u] = degreeUsers[u];
+          if (!(u in foundUserDegrees)) foundUserDegrees[u] = i + 1;
         }
 
-        if (!grow) {
-          setUserGraph({ nodes: graphNodes, links: [] });
-          // https://github.com/vasturiano/react-force-graph/issues/238
-          // setUserGraph({ nodes: graphUsers, links: graphLinks });
-        }
+        // Display a single transaction between two users in the graph, and take
+        // the latest. Links that are generated in future searches will be older.
+        const newDegreeLinks = degreeLinks.filter((link) => {
+          const people = [link.from, link.to].sort();
+          const linkKey = `${people[0]}-${people[1]}`;
+          if (seenLinks.has(linkKey)) return false;
+          seenLinks.add(linkKey);
+          return true;
+        });
+        foundLinks.push(...newDegreeLinks);
 
         // Keep only new transactions
-        for (const t of degreeTransactions) {
-          const k = `${t.actor.username}${t.date}`;
-          if (!seenTransactions.has(k)) {
-            seenTransactions.add(k);
-            curTransactions.push(t);
-          }
+        const newDegreeTransactions = degreeTransactions.filter((t) => {
+          const transactionKey = `${t.actor.username}${t.date}`;
+          if (seenTransactions.has(transactionKey)) return false;
+          seenTransactions.add(transactionKey);
+          return true;
+        });
+        foundTransactions.push(...newDegreeTransactions);
+
+        if (!grow) {
+          setUserGraph({
+            nodes: generateGraphNodes(foundUsers, foundUserDegrees),
+            links: generateGraphLinks(newDegreeLinks),
+          });
         }
-        setTransactions([...transactions, ...curTransactions]);
       });
 
       searchedUsers = new Set([...searchedUsers, ...usersToSearch]);
+      setUserDegrees(foundUserDegrees);
+      setTransactions([...transactions, ...foundTransactions]);
     }
 
     if (foundUsers.length === 0 && !grow) {
       // Typically only occurs when there is an API error
       setUserGraph({ nodes: [{ name: username, username }], links: [] });
-    } else if (grow) {
-      // Combine new found users and users already in the graph
-      const allUsers = foundUsers;
-      for (const x of userGraph.nodes) allUsers[x.username] = x.name;
-
-      const newNodes = Object.keys(allUsers).map((user) => ({
-        name: allUsers[user],
-        username: user,
-        degree: curUserDegrees[user],
-        links: [],
-      }));
-
-      // To get around the issue of the graph not updating when links previously exist,
-      // we generate 'new links' by changing link id forcing a re-render.
-      // https://github.com/vasturiano/react-force-graph/issues/238
-      const newLinks = [];
-      for (const x of [...userGraph.links, ...graphLinks]) {
-        newLinks.push({ id: linkId, ...x });
-        setLinkId(linkId + 1);
-      }
-
-      setUserGraph({
-        nodes: newNodes,
-        links: newLinks,
-      });
     } else {
+      for (const n of userGraph.nodes) foundUsers[n.username] = n.name;
+      const newGraphLinks = grow
+        ? [...userGraph.links, ...foundLinks]
+        : foundLinks;
+
       setUserGraph({
-        nodes: Object.keys(foundUsers).map((user) => ({
-          name: foundUsers[user],
-          username: user,
-          degree: curUserDegrees[user],
-        })),
-        links: graphLinks,
+        nodes: generateGraphNodes(foundUsers, foundUserDegrees),
+        links: generateGraphLinks(newGraphLinks),
       });
     }
   };
