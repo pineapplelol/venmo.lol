@@ -33,7 +33,7 @@ function UserGraph(props: Props): Node {
   const searchDegree = async (
     usersToSearch: Set<string>,
     maxTransactions: number = 20,
-  ): [StringDict, Array<GraphLink>, Array<Transaction>] => {
+  ): Promise<[StringDict, Array<GraphLink>, Array<Transaction>]> => {
     // Users is a dictionary of all users found during the search. The key is the username,
     // and the value is the user's display name.
     const users = {};
@@ -156,7 +156,7 @@ function UserGraph(props: Props): Node {
 
     if (foundUsers.length === 0 && !grow) {
       // Typically only occurs when there is an API error
-      setUserGraph({ nodes: [{ name: username }], links: [] });
+      setUserGraph({ nodes: [{ name: username, username }], links: [] });
     } else if (grow) {
       // Combine new found users and users already in the graph
       const allUsers = foundUsers;
@@ -166,6 +166,7 @@ function UserGraph(props: Props): Node {
         name: allUsers[user],
         username: user,
         degree: curUserDegrees[user],
+        links: [],
       }));
 
       // To get around the issue of the graph not updating when links previously exist,
@@ -198,7 +199,7 @@ function UserGraph(props: Props): Node {
    * @param {string} username - the user to search and add to graph.
    */
   const addNode = (username: string) => {
-    generateUserGraph(username, true);
+    generateUserGraph(username, true, 1);
   };
 
   /**

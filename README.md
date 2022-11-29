@@ -6,7 +6,13 @@ A graph visualization of a payment network over Venmo. Can view a specific user'
 
 ---
 
-https://user-images.githubusercontent.com/7104017/204367083-126ee2e7-2646-45ca-a4ec-31fa285140cb.mp4
+https://user-images.githubusercontent.com/7104017/204433576-49176975-598f-4243-9aba-893e24ababcb.mp4
+
+## Features
+
+- Click on user in the sidebar to set as base user
+- Click on node to do an additional degree search from that user
+- Click on edge to copy the transaction details to clipboard
 
 ## Usage
 

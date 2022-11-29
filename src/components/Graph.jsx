@@ -13,6 +13,7 @@ type Props = {
 };
 
 const highlightColor = '#fff';
+const defaultColor = 'grey';
 const colors = [
   '#E0ACD5',
   '#3993DD',
@@ -43,7 +44,10 @@ function Graph(props: Props): Node {
       for (const link of links) {
         if (!linkColors[link] || linkColors[link].degree > node.degree) {
           linkColors[link] = {
-            color: colors[node.degree],
+            color:
+              node.degree !== null && node.degree !== undefined
+                ? colors[node.degree]
+                : defaultColor,
             degree: node.degree,
           };
         }
@@ -66,7 +70,7 @@ function Graph(props: Props): Node {
   const getLinkColor = (link) => {
     if (highlightLinks.has(link.name)) return highlightColor;
     if (linkColors[link.name]) return linkColors[link.name].color;
-    return 'grey';
+    return defaultColor;
   };
 
   const useWindowSize = (): [number, number] => {
@@ -139,12 +143,7 @@ function Graph(props: Props): Node {
           }
         }}
         onLinkClick={(link) => {
-          const el = document.createElement('textarea');
-          el.value = link.name;
-          document.body.appendChild(el);
-          el.select();
-          document.execCommand('copy');
-          document.body.removeChild(el);
+          navigator.clipboard.writeText(link.name);
           openCopiedNotification();
         }}
       />
