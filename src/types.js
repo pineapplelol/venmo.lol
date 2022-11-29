@@ -14,7 +14,7 @@ export type GraphLink = {
   to: string,
   from: string,
   name: string,
-  id?: string,
+  id?: number,
 };
 
 export type GraphData = {

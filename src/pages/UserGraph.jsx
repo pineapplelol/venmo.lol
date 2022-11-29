@@ -26,27 +26,25 @@ function UserGraph(props: Props): Node {
 
   /**
    * Generate graph nodes.
-   * @param {Array<StringDict>} users a dictionary of users, where the key is the
+   * @param {StringDict} users a dictionary of users, where the key is the
    *                            username and the value is the display name.
    * @param {Array<{string: number}}} degrees a dictionary of user degrees, where
    *                                  the key is the username and the value is the degree.
    * @returns
    */
-  const generateGraphNodes = (
-    users: Array<StringDict>,
-    degrees,
-  ): Array<GraphNode> => {
-    return Object.keys(users).map((user) => ({
+  const generateGraphNodes = (users: StringDict, degrees): Array<GraphNode> => {
+    const nodes = Object.keys(users).map((user) => ({
       name: users[user],
       username: user,
       degree: degrees[user],
     }));
+    return nodes;
   };
 
   /**
    * Generate graph links.
    *
-   * There is a current bug in the graph library – when the graph is updated, links that previously exist do not
+   * There is a bug in the current graph library: when the graph is updated, links that previously exist do not
    * change position to account for the new graph, and thus are detached. To get around the issue of the graph not
    * updating when links previously exist, we generate 'new links' by changing link id forcing a re-render.
    * Reference: https://github.com/vasturiano/react-force-graph/issues/238
@@ -146,7 +144,7 @@ function UserGraph(props: Props): Node {
       await searchDegree(usersToSearch).then((data) => {
         const [degreeUsers, degreeLinks, degreeTransactions] = data;
 
-        // Process all users found in the degree – add to found users and update user degrees.
+        // Process all users found in the degree:  add to found users and update user degrees.
         for (const u of Object.keys(degreeUsers)) {
           if (!(u in foundUsers)) foundUsers[u] = degreeUsers[u];
           if (!(u in foundUserDegrees)) foundUserDegrees[u] = i + 1;
